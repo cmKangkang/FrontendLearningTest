@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app1"></div>
+  <div id="app2"></div>
+  <script>
+    Vue.component('stack-overflow', {
+      template: `<div>stack-overflow <slot></slot></div>`
+    });
+    new Vue({
+      el: '#app1',
+      template: '<stack-overflow><stack-overflow /></stack-overflow>'
+    });
+
+    var count = 0;
+
+    const comp = {
+      name: 'recursion',
+      template: '<div :key="count">this is recursion {{count}}<template v-if="flag"><recursion :count="count + 1"/></template></div>',
+      props: ['count'],
+      // data: function() {
+      //   return {
+      //     count: this.props.count,
+      //   }
+      // },
+      computed: {
+        flag() {
+          return this.count < 5;
+        },
+      },
+      // created: function() {
+      //   this.count ++;
+      // }
+    };
+    new Vue({
+      el: '#app2',
+      components: {
+        recursion: comp,
+      },
+      data: {
+        count: 0,
+      },
+      template: '<div><recursion :count="count + 1"/></div>'
+    })
+  </script>
+</body>
+</html>

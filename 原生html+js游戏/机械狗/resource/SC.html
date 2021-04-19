@@ -1,0 +1,57 @@
+﻿<html>
+<head>
+    <title>游戏结束</title>
+    <script language="JavaScript">
+        var Tl = 1300;
+        function Drift() {
+            Tl -= 50;
+            var b = 1;
+            Typhon.style.left = Tl;
+            if (b == 1) {
+                if (Tl == 700) {
+                    //撞击M4
+                    M4p.style.transform = "rotate(-90deg)";
+                    spitp.height = 0;
+                };
+                if (Tl == 600) {
+                    ROp.style.transform = "rotate(-90deg)";
+                    RO.style.top = 330;
+                }
+                b = 0;
+            }
+            if (Tl == 0) {
+                Tl = 1300;
+            };
+        }
+        function Looper() {
+            var loop = window.setInterval("Drift()", 30);
+        }
+    </script>
+</head>
+<body onload="Looper()">
+    <div style="position:absolute;top:5%;left:40%">
+        好吧，其实我有这么个在阻挡20只机械狗后结束的胜利结局<br />
+        但是快速飞过的坦克将两人撞到在地<br />
+        <a href="../塌缩点.html"><font size="8">重新开始</font></a>
+    </div>
+    <div style="position:absolute;top:90%;left:40%">
+        这个破游戏依旧是没有什么Happy Ending的
+    </div>
+    <div id="RO" style="position:absolute;top:300px;left:650px">
+        <img src="RO.png" width="100" height="100" name="ROp" /><br />
+        &nbsp;&nbsp;&nbsp;
+        <font size="4" color="black">RO</font>
+    </div>
+    <div id="M4" style="position:absolute;top:300px;left:750px">
+        <img src="M4R.gif" width="100" height="100" name="M4p" /><br />
+        &nbsp;&nbsp <font size="4" color="black">M4</font>
+    </div>
+    <div id="Spit" style="position:absolute;top:325px;left:835px">
+        <img src="spitR.png" width="131" height="45" name="spitp" /><br />
+    </div>
+    <div id="Typhon" style="position:absolute;top:180px;left:1300px">
+        <img src="Typhon.png" width="360" height="200" name="Ty" />
+    </div>
+
+</body>
+</html>

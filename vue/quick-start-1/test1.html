@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>test1</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">{{message}}</div>
+    <div id="app2">
+      <span v-bind:title="message"> 查看提示信息 </span>
+    </div>
+    <div id="app3">
+      <p v-if="seen">现在你看到我了</p>
+    </div>
+
+    <div id="app4">
+      <ol>
+        <li v-for="todo in todos">{{todo.text}}</li>
+      </ol>
+    </div>
+
+    <div id="app5">
+      <p>{{message}}</p>
+      <button v-on:click="revMsg">消息反转</button>
+    </div>
+
+    <div id="app6">
+      <p>{{msg}}</p>
+      <input type="text" v-model="msg" />
+    </div>
+
+    <div id="app7">
+      <ol>
+        <todo-item
+          v-for="item in groceryList"
+          v-bind:todo="item"
+          v-bind:key="item.id"
+        ></todo-item>
+      </ol>
+    </div>
+
+    <div id="app8">
+      <h1>标题跑马灯</h1>
+      <h2>{{msg}}</h2>
+      <button v-on:click="handleClick">点我</button>
+    </div>
+
+    <script>
+      var app = new Vue({
+        el: "#app",
+        data: {
+          message: "Hello Vue!",
+        },
+      });
+      var app2 = new Vue({
+        el: "#app2",
+        data: {
+          message: "页面加载" + new Date().toLocaleString(),
+        },
+      });
+      var app3 = new Vue({
+        el: "#app3",
+        data: {
+          seen: true,
+        },
+      });
+      var app4 = new Vue({
+        el: "#app4",
+        data: {
+          todos: [
+            { text: "学习js" },
+            { text: "学习vue" },
+            { text: "学习react" },
+          ],
+        },
+      });
+      var app5 = new Vue({
+        el: "#app5",
+        data: {
+          message: "Hello Vue.js",
+        },
+        methods: {
+          revMsg: function () {
+            this.message = this.message.split("").reverse().join("");
+          },
+        },
+      });
+      var app6 = new Vue({
+        el: "#app6",
+        data: {
+          msg: "hello world",
+        },
+      });
+
+      Vue.component("todo-item", {
+        props: ["todo"],
+        template: "<li>{{todo.text}}</li>",
+      });
+      var app7 = new Vue({
+        el: "#app7",
+        data: {
+          groceryList: [
+            { id: 0, text: "蔬菜" },
+            { id: 1, text: "奶酪" },
+            { id: 2, text: "其他" },
+          ],
+        },
+      });
+
+      
+      var app8 = new Vue({
+        el: "#app8",
+        data: {
+          msg: "Looking at Shinning Me!",
+          intervalId:undefined,
+        },
+        methods: {
+          // 尽量不要再选项property或回调上使用箭头函数
+          handleClick: function () {
+            if(this.intervalId){
+              clearInterval(this.intervalId);
+              this.intervalId=undefined;
+            }
+            else if(!this.intervalId){
+              this.intervalId=setInterval(()=>{//这儿可以使用箭头函数，因为箭头函数总是指向定义它的作用域，此时，上一级的this指向正确
+                let f = this.msg.substring(0, 1);
+                let l = this.msg.substring(1);
+                this.msg = l + f;
+              },500);
+            }
+          }
+        },
+      });
+    </script>
+  </body>
+</html>

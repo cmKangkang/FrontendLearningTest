@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vue-router</title>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h1>Hello App!</h1>
+    <p>
+      <!-- 1. router-link组件用于导航 -->
+      <!-- 2. to 属性指定链接 -->
+      <!-- 3. router-link默认会被渲染为a标签 -->
+      <router-link to='/foo'>go to foo</router-link>
+      <router-link to='/bar'>go to bar</router-link>
+    </p>
+
+    <!-- 路由配置到的组件将会渲染再router-view中 -->
+    <router-view></router-view>
+    <script src="./index.js"></script>
+  </div>
+</body>
+</html>

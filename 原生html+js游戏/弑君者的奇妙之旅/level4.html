@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>弑君者的奇妙之旅</title>
+    <link href="level4.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <p>w/a/s/d控制移动  空格闪现 3秒冷却 <span id="cold" style="color: red;">冷却完毕</span></p>
+    <p>游戏目标：血量归零前到达蓝色点</p>
+    <img src="image/evil.jpg" id="evil" class="image"/>
+    <img src="image/evil.jpg" id="evil2" class="image"/>
+    <img src="image/baijin.jpg" id="baijin" class="image"/>
+    <img src="image/baijin.jpg" id="baijin2" class="image"/>
+    <img src="image/xhl.jpg" id="xhl" class="image"/>
+    <img src="image/attractor.jpg" id="attractor" class="image"/>
+    <img src="image/attractor.jpg" id="attractor2" class="image"/>
+    <img src="image/in.jpg" id="in" class="image"/>
+    <img src="image/out.jpg" id="out" class="image"/>
+    <div id="shijun" class="image" style="top:100px;left:150px;animation:''">
+        <img src="image/shijun.jpg"/>
+        <div id="hp" style="color: #00ff00;">100</div>
+    </div>
+    <div id="introduction" style="top:500px;position: absolute;">
+        <div>游戏角色</div>
+        <div>
+             <img src="image/evil.jpg">
+             <b>上下移动，攻击触碰到它的玩家</b>
+             <img src="image/baijin.jpg">
+             <b>一定间隔内射出弓箭和火箭，火箭会产生灼烧效果</b>
+             <img src="image/attractor.jpg"> 
+             <b>与它距离达到阈值，玩家角色会被吸附到该角色的位置</b>
+        </div>
+    </div>
+    <script src="control.js"></script>
+    <script src="level4.js"></script>
+</body>
+</html>

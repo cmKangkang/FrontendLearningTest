@@ -1,0 +1,990 @@
+<!doctype html>
+<html>
+<!--清除所有默认边距-->
+	<style>
+		body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,texarea,p,blockquote,th,td
+		{
+			margin:0px;
+			padding:0px;
+		}
+	</style>
+<head>
+	<meta charset="utf-8">
+	<title>No.59 ruins</title>
+	<script>
+//		定义敌人基类（暂未使用）
+		class EnemyBase
+		{
+//			构造函数
+			constructor(id,name,threeProperty,speed,movePath,attackColdDown)
+			{
+//				敌人id,作为唯一标识符
+				this.id=id;
+//				敌人名称，作为继承用
+				this.name=name;
+//				敌人属性：最大生命值
+				this.healthMax=threeProperty[0];
+//				敌人属性：当前生命值
+				this.health=this.healthMax;
+//				敌人属性：攻击值
+				this.attack=threeProperty[1];
+//				敌人属性：防御值
+				this.defend=threeProperty[2];
+
+//				敌人速度，移动时使用
+				this.speed=speed;
+//				敌人移动路径点，移动时使用
+				this.movePath=movePath;
+//				敌人当前X坐标
+				this.positionX;
+//				敌人当前Y坐标
+				this.positionY;
+
+//				敌人状态：是否移动
+				this.isMove=true;
+//				敌人状态：是否被阻挡，false为未阻挡
+				this.isBlocked=false;
+//				保存阻挡者id
+				this.blockPerson;
+//				敌人状态：预定攻击冷却时间
+				this.attackColdDown=attackColdDown;
+//				敌人状态：当前攻击冷却时间
+				this.nowColdDown=0;
+			}	
+		}
+		
+//		定义干员基类（暂未使用）
+		class personBase
+		{
+//			构造函数
+			constructor(name,threeProperty,attackColdDown)
+			{
+//				干员姓名，作为唯一标识符
+				this.name=name;
+//				干员属性：最大生命值
+				this.healthMax=threeProperty[0];
+//				干员属性：当前生命值
+				this.health=this.healthMax;
+//				干员属性：攻击值
+				this.attack=threeProperty[1];
+//				干员属性：防御值
+				this.defend=threeProperty[2];
+				
+//				干员状态：预定攻击冷却时间
+				this.attackColdDown=attackColdDown;
+//				干员状态：当前攻击冷却时间
+				this.nowColdDown=0;
+			}
+		}
+	</script>
+	
+	<script type="application/javascript">
+//
+//		mapArray存储当前关卡地图数据:
+//		10 表示地面可部署位置
+//		11 表示地面不可部署位置
+//		12 表示地面敌方出生点
+//		13 表示地面我方防守点
+//		20 表示高台可部署位置
+//		21 表示高台不可部署位置
+//		22 表示高台敌方出生点
+//		23 表示高台我方防守点
+		var mapArray=[[21,21,21,21,21,21,21,21,21,21,21],
+					  [12,10,10,10,10,10,10,10,10,10,21],
+					  [21,21,21,10,10,20,10,20,20,10,21],
+					  [12,10,10,10,10,10,10,10,20,10,21],
+					  [21,12,10,10,10,10,10,10,21,10,21],
+					  [21,21,21,20,20,20,10,10,20,10,21],
+					  [13,11,11,10,10,11,10,10,10,10,12],
+					  [21,21,21,21,21,21,21,21,21,21,21]];
+//		personInfoList存储当前关卡干员数据
+		var personInfoList=[["霜星","特种",[100,1000,10000]],
+						["白咕咕","远程",[200,2000,20000]],
+						["拉狗","近战",[300,3000,30000]],
+						["德狗","近战",[400,4000,40000]],
+						["能天使","远程",[500,5000,50000]],
+						["蓝天使","远程",[600,6000,60000]]];
+//		waitPersonList存储当前等待区域干员名单
+		var waitPersonList=[];
+//		fightPersonList存储当前战斗区域干员名单
+		var fightPersonList=[];
+
+/***************************************************************************************************************************/
+		
+//		enemyAppearList存储当前关卡敌人信息
+//		顺序为出现时间，敌人种类，出生地点，移动速度，移动路径点
+		var enemyAppearList=[[3,"红刀哥",[1,0],2,[[1,9],[6,9],[6,0]]],
+							 [5,"红刀哥",[3,0],2,[[3,7],[6,7],[6,0],[6,7],[6,0]]]];
+//		enemyNumMax存储当前关卡敌人数量
+		var enemyNumMax=enemyAppearList.length;
+//		enemyDied存储当前关卡已死亡或攻入我方防御点（被手撕）的敌人数量
+		var enemyDied=0;
+//		enemyInFight存储当前战斗区域敌人名单
+		var enemyInFight=[];
+//		enemyId用于标记敌人id，每生成一个敌人自加一
+		var enemyId=0;
+		
+/***************************************************************************************************************************/
+
+//		nowTime为当前关卡时间轴记录
+		var nowTime=0.0;
+//		nowFrame为当前关卡帧轴计数器
+		var nowFrame=0;
+//		startCost为开始时的初始Cost
+		var startCost=10;
+//		addCostPerTick为每帧增加的Cost
+		var addCostPerTick=0.05;
+//		nowCost为当前Cost
+		var nowCost=startCost;
+//		personNumMax为当前关卡最大可部署干员数量
+		var personNumMax=9;
+//		nowPersonNum为当前已部署干员数量
+		var nowPersonNum=0;
+//		healthPointMax为当前关卡我方防御点生命值
+		var healthPointMax=30;
+//		nowHealthPoint为我方防御点当前生命值
+		var nowHealthPoint=healthPointMax;
+		
+		
+//		personName确定当前选中干员姓名
+		var personName;
+//		placeLineNum,placeLineNum确定当前选中干员行列
+		var placeLineNum,placeLineNum;
+		
+//		mouseX，mouseY定位鼠标当前位置
+		var mouseX,mouseY;
+//		canFollow确定当前元素是否可以拖动
+		var canFollow=false;
+//		checkDirection用于确定是否有干员刚加入战斗区域等待选择方向
+		var checkDirection=false; 
+//		pressInCenter用于确定选择战斗方向时鼠标按下位置是否在等待选择方向的干员的中央位置
+		var pressInCenter=false;
+//		isSelected用于确定是否有战斗区域的干员被选中查看详细
+		var isSelected=false;
+		
+//		waitPlaceTop,waitPlaceRight记录干员等待区域顶部，右部坐标（即右上角的Y,X坐标）
+		var waitPlaceTop,waitPlaceRight;
+//		fightPlaceLeft,fightPlaceRight记录战斗区域最左与最右的X坐标范围；
+//		fightPlaceTop,fightPlaceBottom记录战斗区域最上与最下的Y坐标范围。
+		var fightPlaceLeft,fightPlaceRight,fightPlaceTop,fightPlaceBottom;
+		
+		//	preLoadImg用于预载图片
+		function preLoadImg()
+		{
+			var imgPreLoad=["char/白咕咕_小.png","char/白咕咕_静止.png","char/白咕咕_待机.gif","char/白咕咕_攻击.gif",
+							"char/德狗_小.png","char/德狗_静止.png","char/德狗_待机.gif","char/德狗_攻击.gif",
+							"char/拉狗_小.png","char/拉狗_静止.png","char/拉狗_待机.gif","char/拉狗_攻击.gif",
+							"char/能天使_小.png","char/能天使_静止.png","char/能天使_待机.gif","char/能天使_攻击.gif",
+							"char/蓝天使_小.png","char/蓝天使_静止.png","char/蓝天使_待机.gif","char/蓝天使_攻击.gif",
+							"char/霜星_小.png","char/霜星_静止.png","char/霜星_待机.gif","char/霜星_攻击.gif",];
+			for(eachPre of imgPreLoad)
+			{
+				var cacheImg=document.createElement("img");
+				cacheImg.src=eachPre;
+				cacheImg.height="0px";
+				cacheImg.width="0px";
+				document.body.appendChild(cacheImg);
+			}
+		}
+		
+//		initStatusArea用于初始化顶部与底部状态栏
+		function initStatusArea()
+		{
+			document.getElementById("enemyNum").innerHTML="敌方人数  "+enemyDied+" / "+enemyNumMax;
+			document.getElementById("healthPoint").innerHTML="剩余生命值   "+nowHealthPoint;
+			document.getElementById("costInfo").innerHTML="Cost   "+nowCost;
+			document.getElementById("personNumInfo").innerHTML="剩余可部署人数  "+(personNumMax-nowPersonNum);
+		}
+		
+//		initFightArea用于初始化战斗区域地图
+		function initFightArea()
+		{
+			var mapDiv=document.getElementById("map");
+			// 循环行号
+			for(var lineNum=0;lineNum<8;lineNum++)
+			{
+				// 循环列号
+				for(var rawNum=0;rawNum<11;rawNum++)
+				{
+					var img=document.createElement("img");
+					img.id=lineNum*100+rawNum;
+					if(mapArray[lineNum][rawNum]==10)
+					{
+						img.src="map/地面.png";
+					}
+					else if(mapArray[lineNum][rawNum]==11)
+					{
+						img.src="map/地面禁止.png";
+					}
+					else if(mapArray[lineNum][rawNum]==12)
+					{
+						img.style.backgroundImage="url('map/地面.png')";
+						img.src="map/敌方出生点.png";
+					}
+					else if(mapArray[lineNum][rawNum]==13)
+					{
+						img.style.backgroundImage="url('map/地面.png')";
+						img.src="map/我方防守点.png";
+					}
+					else if(mapArray[lineNum][rawNum]==20)
+					{
+						img.src="map/高台.png";
+					}
+					else if(mapArray[lineNum][rawNum]==21)
+					{
+						img.src="map/高台禁止.png";
+					}
+					else if(mapArray[lineNum][rawNum]==22)
+					{
+						img.style.backgroundImage="url('map/高台.png')";
+						img.src="map/敌方出生点.png";
+					}
+					else if(mapArray[lineNum][rawNum]==23)
+					{
+						img.style.backgroundImage="url('map/高台.png')";
+						img.src="map/我方防守点.png";
+					}
+					img.style.width="64px";
+					img.style.height="64px";
+					mapDiv.appendChild(img);
+				}
+				// 换行
+				var brLine=document.createElement("br");
+				mapDiv.appendChild(brLine);
+			}
+		}
+		
+//		initWaitArea用于根据选择的干员初始化等待区域干员名单并初始化干员等待区域
+		function initWaitArea()
+		{
+			var waitDiv=document.getElementById("waitPerson");
+			for(newWaitPerson of personInfoList)
+			{
+//				添加等待区域干员名单
+				waitPersonList.push(newWaitPerson[0]);
+//				添加等待干员Div
+				var newPer=document.createElement("div");
+				newPer.id=newWaitPerson[0]+"WaitPerson";
+				newPer.style.position="relative";
+				newPer.style.float="right";
+				newPer.style.width="90px";
+				newPer.style.height="90px";
+				waitDiv.appendChild(newPer);
+//				添加等待干员主图片
+				var basepic=document.createElement("img");
+				basepic.src="char/"+newWaitPerson[0]+"_小.png";
+				basepic.draggable="false";
+				basepic.style.position="absolute";
+				basepic.style.width="90px";
+				newPer.append(basepic);
+//				添加等待干员Cost数值
+				var cost=document.createElement("p");
+				cost.innerHTML="17";
+				cost.style.position="absolute";
+				cost.style.color="#fff";
+				cost.style.fontSize="30px";
+				newPer.append(cost);		
+			}		
+		}
+		
+//		initWaitFightAreaBorder用于初始化战斗区域和等待区域边界,并且修改body高度
+		function initWaitFightAreaBorder()
+		{
+			waitPlaceTop=document.getElementById("waitPerson").offsetTop;
+			waitPlaceRight=document.body.clientWidth;
+			fightPlaceLeft=document.getElementById("0").offsetLeft;
+			fightPlaceRight=document.getElementById((mapArray.length-1)*100+mapArray[0].length-1).offsetLeft+64;
+			fightPlaceTop=document.getElementById("0").offsetTop;
+			fightPlaceBottom=document.getElementById((mapArray.length-1)*100+mapArray[0].length-1).offsetTop+64;
+			console.log(document.getElementById((mapArray.length-1)*100+mapArray[0].length-1).offsetTop);
+			document.getElementsByTagName('body')[0].style.height=window.innerHeight+"px";
+		}
+		
+//		该函数用于禁止图片拖拽
+		function imgdragstart()
+		{
+			return false;
+		}  
+		
+//		该函数在鼠标移动时调用，其作用为：
+//		1. 随时更新鼠标位置记录
+//		2. 在当前图片允许拖动的情况下使图片跟随鼠标
+		function onMouseMoveFunc(e)
+		{
+//			更新鼠标位置
+			mouseX=e.pageX;
+			mouseY=e.pageY;
+//			当鼠标移动时，显示鼠标位置
+			let mousePosition="X:"+mouseX+" Y:"+mouseY;
+			document.getElementById("statusDiv").innerHTML=mousePosition;
+			if(canFollow)
+			{
+				var aimPic=document.getElementById(personName+"Div");
+				aimPic.style.left=mouseX+"px";
+				aimPic.style.top=mouseY+"px";
+			}
+		}
+		
+//		该函数在鼠标按下时调用，根据鼠标点击位置判断，事件共有如下几种：
+//		1. 点击位置为等候干员，则生成"干员_静止"图片并允许跟随鼠标；
+//		2. 点击位置为完成部署的战斗干员，则显示攻击范围，撤回按钮，技能按钮；
+//		3. 点击位置为等待选择方向的战斗干员，则拖动选择方向；
+//		4. 点击在其他地方，忽略此次点击。
+		function onMouseDownFunc()
+		{
+//			console.log(fightPlaceLeft,fightPlaceRight,fightPlaceTop,fightPlaceBottom);
+//			若当前战斗区有干员等待选择方向,则优先处理
+			if(checkDirection==true)
+			{
+				var checkPerson=document.getElementById(personName+"Div");
+//				若鼠标点击位置与干员放置位置相距过远，点击在棱形框外，则删除"干员_静止"图片
+				if((mouseX+mouseY)<(checkPerson.offsetLeft+checkPerson.offsetTop-128)
+				   ||(mouseX+mouseY)>(checkPerson.offsetLeft+checkPerson.offsetTop+128)
+				   ||(mouseX-mouseY)<(checkPerson.offsetLeft-checkPerson.offsetTop-128)
+				   ||(mouseX-mouseY)>(checkPerson.offsetLeft-checkPerson.offsetTop+128))
+				{
+					pressInCenter=false;
+					checkDirection=false;
+					checkPerson.parentNode.removeChild(checkPerson);
+					var placeLocation=document.getElementById("deployInfo");
+					placeLocation.innerHTML=("外围  "+"pressInCenter:false");
+				}
+//				若鼠标点击位置在放置干员位置中央，则令pressInCenter为真，允许鼠标移动以选择方向
+				else if((mouseX+mouseY)>(checkPerson.offsetLeft+checkPerson.offsetTop-64)
+						&&(mouseX+mouseY)<(checkPerson.offsetLeft+checkPerson.offsetTop+64)
+						&&(mouseX-mouseY)>(checkPerson.offsetLeft-checkPerson.offsetTop-64)
+						&&(mouseX-mouseY)<(checkPerson.offsetLeft-checkPerson.offsetTop+64))
+				{
+					pressInCenter=true;
+					var placeLocation=document.getElementById("deployInfo");
+					placeLocation.innerHTML=("中间  "+"pressInCenter:true");
+				}
+			}
+//			若有干员被选中
+			else if(isSelected==true)
+			{
+				var checkPerson=document.getElementById(personName+"Div");
+//				若鼠标点击位置与干员放置位置相距过远，点击在棱形框外，则隐藏棱形框图片
+				if(mouseX<checkPerson.offsetLeft-128
+				   ||mouseY<checkPerson.offsetTop-128
+				   ||(mouseX+mouseY)>(checkPerson.offsetLeft+checkPerson.offsetTop+128)
+				   ||(mouseX-mouseY)<(checkPerson.offsetLeft-checkPerson.offsetTop-128)
+				   ||(mouseX-mouseY)>(checkPerson.offsetLeft-checkPerson.offsetTop+128))
+				{
+					isSelected=false;
+//					显示边框和撤退按钮
+					document.getElementById(personName+"Border").style.visibility="hidden";
+					document.getElementById(personName+"Withdraw").style.visibility="hidden";
+					var placeLocation=document.getElementById("deployInfo");
+					placeLocation.innerHTML=("外围  "+"取消选中");
+				}
+				else if((mouseX+mouseY)<(checkPerson.offsetLeft+checkPerson.offsetTop-128))
+				{
+					isSelected=false;
+					checkPerson.parentNode.removeChild(checkPerson);
+					
+//					移出战斗干员列表，加入等待干员列表
+					fightPersonList.forEach(function(item, index, arr) 
+					{
+						if(item[0]==personName) 
+						{
+						arr.splice(index,1);
+						}
+					});
+					waitPersonList.push(personName);
+//					添加等待区域干员					
+					var waitDiv=document.getElementById("waitPerson");			
+//					添加等待干员Div
+					var newPer=document.createElement("div");
+					newPer.id=personName+"WaitPerson";
+					newPer.style.position="relative";
+					newPer.style.float="right";
+					newPer.style.width="90px";
+					newPer.style.height="90px";
+					waitDiv.appendChild(newPer);
+//					添加等待干员主图片
+					var basepic=document.createElement("img");
+					basepic.src="char/"+personName+"_小.png";
+					basepic.draggable="false";
+					basepic.style.position="absolute";
+					basepic.style.width="90px";
+					newPer.append(basepic);
+//					添加等待干员Cost数值
+					var cost=document.createElement("p");
+					cost.innerHTML="17";
+					cost.style.position="absolute";
+					cost.style.color="#fff";
+					cost.style.fontSize="30px";
+					newPer.append(cost);	
+//					添加时间线记录
+					var newPlaceInfo=document.createElement("p");
+					newPlaceInfo.innerHTML="当前时间轴："+nowTime+"；当前帧轴："+nowFrame+personName+personName+"撤回了";
+					document.getElementById("timeLineInfo").appendChild(newPlaceInfo);
+					nowPersonNum-=1;
+					document.getElementById("personNumInfo").innerHTML="剩余可部署人数  "+(personNumMax-nowPersonNum);
+				}
+			}
+//			若没有等待选择方向的干员，则根据鼠标位置判断，若鼠标按下时位置在等候干员区域
+			else if((mouseY>waitPlaceTop)&&(mouseY<waitPlaceTop+90))
+			{
+//				waitPersonNum记录点击位置是从右向左第几个干员位置
+				var waitPersonNum=0;
+				while(waitPlaceRight-90*waitPersonNum>=mouseX)
+				{
+					waitPersonNum++;
+				}
+//				若点击在有效干员数以内，则在鼠标处生成跟随鼠标移动的"干员_静止"图片
+				if(waitPersonNum<=waitPersonList.length)
+				{
+					canFollow=true;
+					personName=waitPersonList[waitPersonNum-1];
+					console.log("点击了",waitPersonList[waitPersonNum-1]);
+//					添加Div盒子
+					var moveDiv=document.createElement("div");
+					moveDiv.id=personName+"Div";
+					moveDiv.style.position="fixed";	
+					moveDiv.style.left=mouseX+"px";
+					moveDiv.style.top=mouseY+"px";
+					document.body.appendChild(moveDiv);
+//					添加主图片
+					var moveImg=document.createElement("img");
+					moveImg.src="char/"+personName+"_静止.png";
+					moveImg.id=personName+"MainImg";
+					moveImg.draggable="false";
+					moveImg.ondragstart=imgdragstart;
+					moveDiv.appendChild(moveImg);
+//					设置主图片大小与位置
+					let zoomTimes=0.18;
+					moveImg.style.height=moveImg.naturalHeight*zoomTimes+"px";
+					moveImg.style.width=moveImg.naturalWidth*zoomTimes+"px";
+					moveImg.style.position="absolute";
+					moveImg.style.top="-"+parseFloat(moveImg.style.height)/2+"px";
+					moveImg.style.left="-"+parseFloat(moveImg.style.width)/2+"px";
+//					添加棱形框
+					var borderBoxImg=document.createElement("img");
+					borderBoxImg.src="char/人物边框.png";
+					borderBoxImg.id=personName+"Border";
+					borderBoxImg.draggable="false";
+					borderBoxImg.ondragstart=imgdragstart;
+					moveDiv.appendChild(borderBoxImg);
+//					设置棱形框位置
+					borderBoxImg.style.position="absolute";
+					borderBoxImg.style.top="-128px";
+					borderBoxImg.style.left="-128px";
+					borderBoxImg.style.visibility="hidden";	
+//					添加撤退按钮
+					var withdrawImg=document.createElement("img");
+					withdrawImg.src="char/撤退干员.png";
+					withdrawImg.id=personName+"Withdraw";
+					withdrawImg.draggable="false";
+					withdrawImg.ondragstart=imgdragstart;
+					moveDiv.appendChild(withdrawImg);
+//					设置撤退按钮位置
+					withdrawImg.style.position="absolute";
+					withdrawImg.style.top="-128px";
+					withdrawImg.style.left="-128px";
+					withdrawImg.style.width="64px";
+					withdrawImg.style.visibility="hidden";
+					
+//					设置干员信息显示
+					var personInfoDiv=document.getElementById("personInfo");
+					personInfoDiv.innerHTML="";
+					for(eachPersonInfo of personInfoList)
+					{
+						if(eachPersonInfo[0]==personName)
+						{
+							var personNamePar=document.createElement("p");
+							personNamePar.innerHTML=personName;
+							personInfoDiv.appendChild(personNamePar);
+							var personAtkPar=document.createElement("p");
+							personAtkPar.innerHTML=eachPersonInfo[2][0];
+							personInfoDiv.appendChild(personAtkPar);
+							var personDefPar=document.createElement("p");
+							personDefPar.innerHTML=eachPersonInfo[2][1];
+							personInfoDiv.appendChild(personDefPar);
+							var personHPPar=document.createElement("p");
+							personHPPar.innerHTML=eachPersonInfo[2][2];
+							personInfoDiv.appendChild(personHPPar);
+						}
+					}
+				}
+			}
+//			若鼠标按下时位置在战斗区域
+			else if(mouseX>fightPlaceLeft
+					&&mouseX<fightPlaceRight
+					&&mouseY>fightPlaceTop
+					&&mouseY<fightPlaceBottom)
+			{
+//				mouseLine为鼠标点击行数
+				var mouseLine=parseInt((mouseY-fightPlaceTop)/64);
+//				mouseRaw为鼠标点击列号
+				var mouseRaw=parseInt((mouseX-fightPlaceLeft)/64);
+				for(eachPerson of fightPersonList)
+				{
+					if(eachPerson[1]==mouseLine&&eachPerson[2]==mouseRaw)
+					{
+//						isSelected设为真，该干员被选中
+						isSelected=true;
+						personName=eachPerson[0];
+//						设置干员信息显示
+						var personInfoDiv=document.getElementById("personInfo");
+						personInfoDiv.innerHTML="";
+						for(eachPersonInfo of personInfoList)
+						{
+							if(eachPersonInfo[0]==personName)
+							{
+								var personNamePar=document.createElement("p");
+								personNamePar.innerHTML=personName;
+								personInfoDiv.appendChild(personNamePar);
+								var personAtkPar=document.createElement("p");
+								personAtkPar.innerHTML=eachPersonInfo[2][0];
+								personInfoDiv.appendChild(personAtkPar);
+								var personDefPar=document.createElement("p");
+								personDefPar.innerHTML=eachPersonInfo[2][1];
+								personInfoDiv.appendChild(personDefPar);
+								var personHPPar=document.createElement("p");
+								personHPPar.innerHTML=eachPersonInfo[2][2];
+								personInfoDiv.appendChild(personHPPar);
+							}
+						}
+//						显示边框和撤退按钮
+						document.getElementById(personName+"Border").style.visibility="visible";
+						document.getElementById(personName+"Withdraw").style.visibility="visible";
+					}
+				}
+			}
+		}
+		
+//		该函数为鼠标释放时调用，事件有如下几种：
+//		1. 拖动干员入场，则检测释放位置是否为可放置干员的位置；
+//		2. 设置就绪干员方向，则检测鼠标移动方向。
+		function onMouseUpFunc()
+		{
+			var resetImg;
+//			若是在拖动干员，则检测落点
+			if(canFollow==true)
+			{
+				canFollow=false;
+				resetImg=document.getElementById(personName+"Div");
+//				console.log(resetImg);
+//				console.log(fightPlaceLeft,fightPlaceRight,fightPlaceTop,fightPlaceBottom)
+//				若是在战区范围，则获取人物战斗定位且检测地形以及是否与其他人员重合后放置,并且在等候区删除,加入战斗区
+				if(mouseX>fightPlaceLeft
+				   &&mouseX<fightPlaceRight
+				   &&mouseY>fightPlaceTop
+				   &&mouseY<fightPlaceBottom)
+				{
+//					placeLineNum显示当前放置的行
+					placeLineNum=parseInt((mouseY-fightPlaceTop)/64);
+//					placeRawNum显示当前放置的列
+					placeRawNum=parseInt((mouseX-fightPlaceLeft)/64);
+//					fightDistance记录当前干员可放置于近战位或远程位
+					var fightDistance;
+					
+//					查看干员信息表确认干员可放置位置的类型
+					for(eachPersonInfo of personInfoList)
+					{
+						if(eachPersonInfo[0]==personName)
+						{
+							fightDistance=eachPersonInfo[1];
+						}
+					}
+//					console.log(personName,"放置在",placeLineNum,placeRawNum,fightDistance);
+//					isSameLocation检测放置位置是否与已放置干员重合,false为不重合，true为重合；
+					var isSameLocation=false;
+//					循环已置入战场的干员位置确认没有重合
+					for(alreadyPerson of fightPersonList)
+					{
+						if(alreadyPerson[1]==placeLineNum&&alreadyPerson[2]==placeRawNum)
+						{
+							isSameLocation=true;
+						}
+					}
+//					console.log(isSameLocation);
+//					若检测为不重合，则根据干员部署位置检测当前位置是否可部署
+					if(!isSameLocation)
+					{
+						if(fightDistance=="近战")
+						{
+//							若不是可部署位置，删除"干员_静止"图片
+							if(mapArray[placeLineNum][placeRawNum]!=10)
+							{
+								resetImg=document.getElementById(personName+"Div");
+								resetImg.parentElement.removeChild(resetImg);
+							}
+//							若是可部署位置，则准备选择方向
+							else
+							{
+								checkDirection=true;
+//								resetImg.src="char/"+personName+"_待机.gif";
+								resetImg.style.left=(fightPlaceLeft+placeRawNum*64+32)+"px";
+								resetImg.style.top=(fightPlaceTop+placeLineNum*64+32)+"px";
+								document.getElementById(personName+"Border").style.visibility="visible";
+								document.getElementById(personName+"Withdraw").style.visibility="visible";
+								var placeLocation=document.getElementById("deployInfo");
+								placeLocation.innerHTML=("行:"+placeLineNum+" 列:"+placeRawNum);
+							}
+						}
+						else if(fightDistance=="远程")
+						{
+//							若不是可部署位置，删除临时跟随图片
+							if(mapArray[placeLineNum][placeRawNum]!=20)
+							{
+								resetImg=document.getElementById(personName+"Div");
+								resetImg.parentElement.removeChild(resetImg);
+							}
+//							若是可部署位置，则准备选择方向
+							else
+							{
+								checkDirection=true;
+								resetImg.style.left=(fightPlaceLeft+placeRawNum*64+32)+"px";
+								resetImg.style.top=(fightPlaceTop+placeLineNum*64+32)+"px";
+								document.getElementById(personName+"Border").style.visibility="visible";
+								document.getElementById(personName+"Withdraw").style.visibility="visible";
+								var placeLocation=document.getElementById("deployInfo");
+								placeLocation.innerHTML=("行:"+placeLineNum+" 列:"+placeRawNum);
+							}
+						}
+						else if(fightDistance=="特种")
+						{
+//							若不是可部署位置，删除临时跟随图片
+							if(mapArray[placeLineNum][placeRawNum]!=20&&mapArray[placeLineNum][placeRawNum]!=10)
+							{
+								resetImg=document.getElementById(personName+"Div");
+								resetImg.parentElement.removeChild(resetImg);
+							}
+//							若是可部署位置，则准备选择方向
+							else
+							{
+								checkDirection=true;
+								resetImg.style.left=(fightPlaceLeft+placeRawNum*64+32)+"px";
+								resetImg.style.top=(fightPlaceTop+placeLineNum*64+32)+"px";			
+								document.getElementById(personName+"Border").style.visibility="visible";
+								document.getElementById(personName+"Withdraw").style.visibility="visible";
+								var placeLocation=document.getElementById("deployInfo");
+								placeLocation.innerHTML=("行:"+placeLineNum+" 列:"+placeRawNum);
+							}
+						}
+					}
+//					若是与已有干员位置重合则删除当前"干员_静止"图片
+					else
+					{
+						resetImg.parentElement.removeChild(resetImg);
+					}
+				}	
+//				若未将干员拖动至战斗区域，则删除"干员_静止"图片
+				else
+				{
+					resetImg=document.getElementById(personName+"Div");
+					resetImg.parentElement.removeChild(resetImg);
+				}
+			}
+//			若是在选择干员方向
+			else if(checkDirection)
+			{
+				var checkPerson=document.getElementById(personName+"Div");
+				var leftRightBia=Math.abs(mouseX-checkPerson.offsetLeft);
+				var topBottomBia=Math.abs(mouseY-checkPerson.offsetTop);
+				if(pressInCenter==true)
+				{
+					if(leftRightBia>topBottomBia)
+					{
+						if(mouseX-checkPerson.offsetLeft>128)
+						{
+							document.getElementById(personName+"MainImg").src="char/"+personName+"_待机.gif";
+							document.getElementById(personName+"Border").style.visibility="hidden";
+							document.getElementById(personName+"Withdraw").style.visibility="hidden";
+							var newPlaceInfo=document.createElement("p");
+							newPlaceInfo.innerHTML="当前时间轴："+nowTime+"；当前帧轴："+nowFrame+personName+"方向确定了：向右，地点确定了："+placeLineNum+" "+placeRawNum;
+							document.getElementById("timeLineInfo").appendChild(newPlaceInfo);
+							checkDirection=false;
+							nowPersonNum+=1;
+							document.getElementById("personNumInfo").innerHTML="剩余可部署人数  "+(personNumMax-nowPersonNum);
+//							移出等待干员列表，加入战斗干员列表
+							waitPersonList.forEach(function(item, index, arr) 
+							{
+								if(item==personName) 
+								{
+								arr.splice(index,1);
+								}
+							});
+							var nameLineRaw=[personName,placeLineNum,placeRawNum];
+							fightPersonList.push(nameLineRaw);
+//							删除等待区域干员	
+							var delDiv=document.getElementById(personName+"WaitPerson");
+							delDiv.parentElement.removeChild(delDiv);
+							console.log(waitPersonList,fightPersonList);
+						}
+						else if(mouseX-checkPerson.offsetLeft<-128)
+						{
+							document.getElementById(personName+"MainImg").src="char/"+personName+"_待机.gif";
+							document.getElementById(personName+"Border").style.visibility="hidden";
+							document.getElementById(personName+"Withdraw").style.visibility="hidden";
+							var newPlaceInfo=document.createElement("p");
+							newPlaceInfo.innerHTML="当前时间轴："+nowTime+"；当前帧轴："+nowFrame+personName+"方向确定了：向左，地点确定了："+placeLineNum+" "+placeRawNum;
+							document.getElementById("timeLineInfo").appendChild(newPlaceInfo);
+							document.getElementById(personName+"MainImg").style.transform="scaleX(-1)";
+							checkDirection=false;
+							nowPersonNum+=1;
+							document.getElementById("personNumInfo").innerHTML="剩余可部署人数  "+(personNumMax-nowPersonNum);
+//							移出等待干员列表，加入战斗干员列表
+							waitPersonList.forEach(function(item, index, arr) 
+							{
+								if(item==personName) 
+								{
+								arr.splice(index,1);
+								}
+							});
+							var nameLineRaw=[personName,placeLineNum,placeRawNum];
+							fightPersonList.push(nameLineRaw);
+//							删除等待区域干员	
+							var delDiv=document.getElementById(personName+"WaitPerson");
+							delDiv.parentElement.removeChild(delDiv);
+							console.log(waitPersonList,fightPersonList);
+						}
+					}
+					else
+					{
+						if(mouseY-checkPerson.offsetTop>128)
+						{
+							document.getElementById(personName+"MainImg").src="char/"+personName+"_待机.gif";
+							document.getElementById(personName+"Border").style.visibility="hidden";
+							document.getElementById(personName+"Withdraw").style.visibility="hidden";
+							var newPlaceInfo=document.createElement("p");
+							newPlaceInfo.innerHTML="当前时间轴："+nowTime+"；当前帧轴："+nowFrame+personName+"方向确定了：向下，地点确定了："+placeLineNum+" "+placeRawNum;
+							document.getElementById("timeLineInfo").appendChild(newPlaceInfo);
+							checkDirection=false;
+							nowPersonNum+=1;
+							document.getElementById("personNumInfo").innerHTML="剩余可部署人数  "+(personNumMax-nowPersonNum);
+//							移出等待干员列表，加入战斗干员列表
+							waitPersonList.forEach(function(item, index, arr) 
+							{
+								if(item==personName) 
+								{
+								arr.splice(index,1);
+								}
+							});
+							var nameLineRaw=[personName,placeLineNum,placeRawNum];
+							fightPersonList.push(nameLineRaw);
+//							删除等待区域干员	
+							var delDiv=document.getElementById(personName+"WaitPerson");
+							delDiv.parentElement.removeChild(delDiv);
+							console.log(waitPersonList,fightPersonList);
+						}
+						else if(mouseY-checkPerson.offsetTop<-128)
+						{
+							document.getElementById(personName+"MainImg").src="char/"+personName+"_待机.gif";
+							document.getElementById(personName+"Border").style.visibility="hidden";
+							document.getElementById(personName+"Withdraw").style.visibility="hidden";
+							var newPlaceInfo=document.createElement("p");
+							newPlaceInfo.innerHTML="当前时间轴："+nowTime+"；当前帧轴："+nowFrame+personName+"方向确定了：向上，地点确定了："+placeLineNum+" "+placeRawNum;
+							document.getElementById("timeLineInfo").appendChild(newPlaceInfo);
+							checkDirection=false;
+							nowPersonNum+=1;
+							document.getElementById("personNumInfo").innerHTML="剩余可部署人数  "+(personNumMax-nowPersonNum);
+//							移出等待干员列表，加入战斗干员列表
+							waitPersonList.forEach(function(item, index, arr) 
+							{
+								if(item==personName) 
+								{
+								arr.splice(index,1);
+								}
+							});
+							var nameLineRaw=[personName,placeLineNum,placeRawNum];
+							fightPersonList.push(nameLineRaw);
+//							删除等待区域干员	
+							var delDiv=document.getElementById(personName+"WaitPerson");
+							delDiv.parentElement.removeChild(delDiv);
+							console.log(waitPersonList,fightPersonList);
+						}
+					}
+				}
+				pressInCenter=false;
+			}
+		}
+		
+//		该函数模拟每一个动画帧，每帧调用一次
+		function Tick()
+		{
+//			按照时间间隔在时间轴上增加时间
+			nowTime+=0.05;
+			nowFrame+=1;
+			nowCost+=addCostPerTick;
+			document.getElementById("tempInfo").innerHTML="当前时间轴："+nowTime+"；当前帧轴："+nowFrame;
+			document.getElementById("costInfo").innerHTML="Cost   "+parseInt(nowCost);
+			
+//			若敌人生成时间轴未读取完成，检测最近一个节点敌人是否要生成
+			if(enemyAppearList.length>0)
+			{
+//				先检查有没有需要新建的敌人
+				if(Math.abs(nowTime-enemyAppearList[0][0])<0.1)
+				{
+//					生成敌人Div
+					var newEnemyDiv=document.createElement("div");
+					newEnemyDiv.id="enemy"+enemyId+"div";
+					newEnemyDiv.style.position="fixed";
+					newEnemyDiv.style.top=(fightPlaceTop+enemyAppearList[0][2][0]*64+32)+"px";
+					newEnemyDiv.style.left=(fightPlaceLeft+enemyAppearList[0][2][1]*64+32)+"px";
+					document.body.appendChild(newEnemyDiv);
+//					生成敌人图片
+					var newEnemyImg=document.createElement("img");
+					newEnemyImg.id="enemy"+enemyId+"img";
+					newEnemyImg.src="enemy/"+enemyAppearList[0][1]+"_移动.gif";
+					newEnemyImg.style.height="192px";
+					newEnemyImg.style.position="absolute";
+					newEnemyImg.style.top="-96px";
+					newEnemyImg.style.left="-96px";
+					newEnemyImg.draggable="false";
+					newEnemyImg.ondragstart=imgdragstart;
+					newEnemyDiv.appendChild(newEnemyImg);
+//					将生成的敌人加入战斗中敌人列表并从敌人生成时间轴中移除，敌人标识ID自加
+					enemyInFight.push([enemyId,enemyAppearList[0][3],enemyAppearList[0][4],enemyAppearList[0][1]]);
+					if(enemyAppearList.length>0)
+					{
+						enemyAppearList.splice(0,1);
+					}
+					enemyId++;
+				}						
+			}
+			
+//			依次遍历当前敌人序列
+			for(var eachFightEnemy=0;eachFightEnemy<enemyInFight.length;eachFightEnemy++)
+			{
+//				根据敌人ID获取敌人信息
+				let enemyDiv=document.getElementById("enemy"+enemyInFight[eachFightEnemy][0]+"div");
+				let enemyImg=document.getElementById("enemy"+enemyInFight[eachFightEnemy][0]+"img");
+				let enemyNowAimX=enemyInFight[eachFightEnemy][2][0][1]*64+32+fightPlaceLeft;
+				let enemyNowAimY=enemyInFight[eachFightEnemy][2][0][0]*64+32+fightPlaceTop;
+//				遍历我方干员检测是否碰撞
+				let isBlock=false;
+				for(eachPerson of fightPersonList)
+				{
+					if(enemyDiv.offsetLeft<eachPerson[2]*64+fightPlaceLeft-24
+					   ||enemyDiv.offsetLeft>eachPerson[2]*64+fightPlaceLeft+88
+					   ||enemyDiv.offsetTop<eachPerson[1]*64+fightPlaceTop-24
+					   ||enemyDiv.offsetTop>eachPerson[1]*64+fightPlaceTop+88)
+					{
+						continue;
+					}
+					else
+					{
+						isBlock=true;
+						if(document.getElementById(eachPerson[0]+"MainImg").getAttribute("src")!="char/"+eachPerson[0]+"_攻击.gif")
+						{
+							document.getElementById(eachPerson[0]+"MainImg").src="char/"+eachPerson[0]+"_攻击.gif";
+						}
+					}
+				}
+//				若碰撞则攻击
+				if(isBlock==true)
+					{
+						if(enemyImg.getAttribute("src")!="enemy/"+enemyInFight[eachFightEnemy][3]+"_攻击.gif")
+							{
+								enemyImg.src="enemy/"+enemyInFight[eachFightEnemy][3]+"_攻击.gif";
+							}
+						console.log(enemyImg);
+					}
+//				若未碰撞则移动
+				else
+				{
+					if(enemyImg.getAttribute("src")=="enemy/"+enemyInFight[eachFightEnemy][3]+"_攻击.gif")
+					{
+						enemyImg.src="enemy/"+enemyInFight[eachFightEnemy][3]+"_移动.gif";
+					}
+//					检测当前位置与最近目标点距离，若小于阈值则直接移动到最近目标点并读取下一个目标点
+					if(Math.sqrt(Math.pow(enemyNowAimY-enemyDiv.offsetTop,2)+Math.pow(enemyNowAimX-enemyDiv.offsetLeft,2))<10)
+					{
+						enemyDiv.style.left=enemyNowAimX+"px";
+						enemyDiv.style.top=enemyNowAimY+"px";
+//						若剩余目标点数量多于一个，则读取下一个目标点
+						if(enemyInFight[eachFightEnemy][2].length>1)
+						{
+							enemyInFight[eachFightEnemy][2].splice(0,1);
+						}
+//						若是最后一个目标点（即我方防御点），则判断进入成功
+						else
+						{
+							enemyDiv.parentNode.removeChild(enemyDiv);
+							enemyInFight.splice(eachFightEnemy,1);
+							enemyDied+=1;
+							nowHealthPoint-=1;
+							document.getElementById("enemyNum").innerHTML="敌方人数  "+enemyDied+" / "+enemyNumMax;
+							document.getElementById("healthPoint").innerHTML="剩余生命值   "+nowHealthPoint;
+						}
+					}
+//					若距离大于阈值，则计算当前坐标与目标点角度并移动
+					else
+					{
+						let aimAng=Math.atan2(enemyNowAimY-enemyDiv.offsetTop,enemyNowAimX-enemyDiv.offsetLeft);
+//						若是向左侧移动则反向贴图
+						if(aimAng>Math.PI/4||aimAng<-Math.PI/4)
+						{
+							document.getElementById("enemy"+enemyInFight[eachFightEnemy][0]+"img").style.transform="scaleX(-1)";
+						}
+//						否则使用正向贴图
+						else
+						{
+							document.getElementById("enemy"+enemyInFight[eachFightEnemy][0]+"img").style.transform="none";
+						}
+						enemyDiv.style.left=(Math.cos(aimAng)*enemyInFight[eachFightEnemy][1]+parseInt(enemyDiv.offsetLeft))+"px";
+						enemyDiv.style.top=(Math.sin(aimAng)*enemyInFight[eachFightEnemy][1]+parseInt(enemyDiv.offsetTop))+"px";
+					}
+				}
+			}																								
+		}
+		
+//		游戏开始时，首先预载图片，再依次初始化战斗区域地图，干员等待区域以及所有边界信息，延时启动Tick函数
+		function onGameBeginFunc()
+		{
+			preLoadImg();
+			initStatusArea();
+			initFightArea();
+			initWaitArea();
+			initWaitFightAreaBorder();
+			setTimeout(function(){setInterval(Tick,50);},1000);
+		}
+	</script>
+</head>
+
+<body bgcolor="#fff" onLoad="onGameBeginFunc()" onmousemove="onMouseMoveFunc(event)" onmousedown="onMouseDownFunc()" onmouseup="onMouseUpFunc()">
+<!--状态栏：显示当前作战进度-->
+	<div>
+		<div id="enemyNum" style="width: 45%;float: left;text-align: end">
+			敌方人数  
+		</div>	
+		<div  id="statusDiv" class="statusDiv" style="width: 10%;float: left;text-align: center">
+			X:0 Y:0
+		</div>
+		<div id="healthPoint" style="width:45%;float: left">
+			剩余生命值
+		</div>
+	</div>
+<!--战斗区域：根据地图数组生成地图层-->
+	<div>
+		<center id="map" class="map" style="font-size: 0">
+		</center>
+		<div id="personInfo" class="personInfo" style="position: fixed;top: 50px;left: 0px">
+		</div>
+		<div id="timeLineInfo" class="personInfo"  style="position: fixed;top: 50px;left: calc(100% - 300px)">
+		</div>
+	</div>
+<!--部署数量/cost计数区：计算当前部署数量以及剩余cost-->
+	<div>
+		<div id="deployInfo" class="deployInfo">
+			noInfo
+		</div>
+		<div id="costInfo" style="text-align: right">
+			Cost
+		</div>
+		<div id="personNumInfo" style="text-align: right">
+			剩余可部署人数 
+		</div>
+	</div>
+<!--等待干员区域：放置未上场干员-->
+	<div id="waitPerson" class="waitPerson">
+	</div>
+	<div id="tempInfo" class="tempInfo">
+	<p id="nowTime"></p>
+	</div>
+</body>
+</html>

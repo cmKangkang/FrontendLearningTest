@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mixins</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app1"></div>
+  <script>
+    var myMixin = {
+      created: function () {
+        this.hello()
+      },
+      methods: {
+        hello: function () {
+          console.log('hello from mixin!')
+        }
+      }
+    }
+    // 定义一个使用混入对象的组件
+    var Component = Vue.extend({
+      mixins: [myMixin]
+    })
+    var component = new Component(); // => "hello from mixin!"
+  </script>
+  <script>
+    let mixin = {
+      data: function () {
+        return {
+          message: 'hello',
+          foo: 'abc'
+        }
+      },
+      created: function() {
+        console.log('mixin 钩子被调用');
+      },
+    };
+    new Vue({
+      mixins: [mixin],
+      data: {
+        message: 'goodbye',
+        bar: 'def'
+      },
+      created: function() {
+        console.log("组件钩子被调用");
+        console.log(this.$data);
+      },
+    });
+  </script>
+  <script>
+    // 自定义组件，自动聚焦
+    Vue.directive('focus', {
+      inserted: function(el) {
+        el.focus();
+      }
+    });
+    
+    new Vue({
+      el: '#app1',
+      // 添加 v-focus 自定义组件
+      template: '<div><input v-focus/></div>'
+    })
+  </script>
+</body>
+</html>

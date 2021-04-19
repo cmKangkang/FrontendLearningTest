@@ -1,0 +1,249 @@
+<html>
+<head>
+    <title>叶戈尔前线</title>
+    <script language="JavaScript">
+        var M4t = 300;
+        var M4l = 850;
+        var spitt = 325;
+        var spitl = 935;
+        var dt = 30;
+        var dl = 30;
+        var LR = 1;
+        var d1t = 80;
+        var d1l = 40;
+        var d2t = 600;
+        var d2l = 40;
+        var d3t = 80;
+        var d3l = 1300;
+        var d4t = 600;
+        var d4l = 1300;
+        var counter = 0;
+        function Initialize() {
+            var i1 = window.setInterval("Counter()", 10);
+            var i2 = window.setInterval("DogM()", 30);
+        }
+        function ImageChange() {
+            if (window.event.keyCode == 32) {
+                //Space
+                if (LR == 1) {
+                    spitp.src = "resource\\spitR.png";
+                    spitt = M4t + 25;
+                    Spit.style.top = spitt;
+                    Spit.style.left = spitl;
+                }
+                else if (LR == 0) {
+
+                }
+            }
+            if (window.event.keyCode == 37) {
+                //Left
+                LR = 0;
+                M4p.src = "resource\\M4L.gif";
+                M4l -= 60;
+                M4.style.left = M4l;
+                spitp.src = "resource\\spitL.png";
+                spitl = M4l - 116;
+                Spit.style.left = spitl;
+            }
+            if (window.event.keyCode == 38) {
+                //Up
+                M4t -= 60;
+                M4.style.top = M4t;
+                spitt = M4t + 25;
+                Spit.style.top = spitt;
+            }
+            if (window.event.keyCode == 39) {
+                //Right
+                LR = 1;
+                M4p.src = "resource\\M4R.gif";
+                M4l += 60;
+                M4.style.left = M4l;
+                spitp.src = "resource\\spitR.png";
+                spitl = M4l + 85;
+                Spit.style.left = spitl;
+            }
+            if (window.event.keyCode == 40) {
+                //Down
+                M4t += 60;
+                M4.style.top = M4t;
+                spitt = M4t + 25;
+                Spit.style.top = spitt;
+            }
+        }
+        function Counter() {
+            //喷雾与狗
+            if (
+                (spitt + 45 >= d1t && spitt <= d1t + 60) &&
+                (spitl + 131 >= d1l && spitl <= d1l + 60)
+            ) {
+                counter++;
+                d1t = 80, d1l = 40;
+            };
+            if (
+                (spitt + 45 >= d2t && spitt <= d2t + 60) &&
+                (spitl + 131 >= d2l && spitl <= d2l + 60)
+            ) {
+                counter++;
+                d2t = 600, d2l = 40;
+            };
+            if (
+                (spitt + 45 >= d3t && spitt <= d3t + 60) &&
+                (spitl + 131 >= d3l && spitl <= d3l + 60)
+            ) {
+                counter++;
+                d3t = 80, d3l = 1300;
+            };
+            if (
+                (spitt + 45 >= d4t && spitt <= d4t + 60) &&
+                (spitl + 131 >= d4l && spitl <= d4l + 60)
+            ) {
+                counter++;
+                d4t = 600, d4l = 1300;
+            };
+            //狗与RO
+            if (
+                (d1t + 60 >= 300 && d1t <= 400) &&
+                (d1l + 60 >= 650 && d1l <= 750)
+            ) {
+                ROP.src = "resource\\ROD.png";
+                ROP.width = 200;
+                ROP.height = 200;
+                confirm("游戏结束，RO被机械狗感染了\n你一共阻挡了" + counter + "只机械狗");
+                location.replace("resource\\ROD.html");
+            };
+            if (
+                (d2t + 60 >= 300 && d2t <= 400) &&
+                (d2l + 60 >= 650 && d2l <= 750)
+            ) {
+                ROP.src = "resource\\ROD.png";
+                ROP.width = 200;
+                ROP.height = 200;
+                confirm("游戏结束，RO被机械狗感染了\n你一共阻挡了" + counter + "只机械狗");
+                location.replace("resource\\ROD.html");
+            };
+            if (
+                (d3t + 60 >= 300 && d3t <= 400) &&
+                (d3l + 60 >= 650 && d3l <= 750)
+            ) {
+                ROP.src = "resource\\ROD.png";
+                ROP.width = 200;
+                ROP.height = 200;
+                confirm("游戏结束，RO被机械狗感染了\n你一共阻挡了" + counter + "只机械狗");
+                location.replace("resource\\ROD.html");
+            };
+            if (
+                (d4t + 60 >= 300 && d4t <= 400) &&
+                (d4l + 60 >= 650 && d4l <= 750)
+            ) {
+                ROP.src = "resource\\ROD.png";
+                ROP.width = 200;
+                ROP.height = 200;
+                confirm("游戏结束，RO被机械狗感染了\n你一共阻挡了" + counter + "只机械狗");
+                location.replace("resource\\ROD.html");
+            };
+            //狗与M4
+            if (
+                (d1t + 60 >= M4t && d1t <= M4t + 100) &&
+                (d1l + 60 >= M4l && d1l <= M4l + 100)
+            ) {
+                M4p.src = "resource\\Ex.gif";
+                M4p.width = 200;
+                M4p.height = 200;
+                confirm("resource\\游戏结束，M4的塌缩液喷雾被引爆了\n你一共阻挡了" + counter + "只机械狗");
+                location.replace("resource\\Ex.html");
+            };
+            if (
+                (d2t + 60 >= M4t && d2t <= M4t + 100) &&
+                (d2l + 60 >= M4l && d2l <= M4l + 100)
+            ) {
+                M4p.src = "resource\\Ex.gif";
+                M4p.width = 200;
+                M4p.height = 200;
+                confirm("游戏结束，M4的塌缩液喷雾被引爆了\n你一共阻挡了" + counter + "只机械狗");
+                location.replace("resource\\Ex.html");
+            };
+            if (
+                (d3t + 60 >= M4t && d3t <= M4t + 100) &&
+                (d3l + 60 >= M4l && d3l <= M4l + 100)
+            ) {
+                M4p.src = "resource\\Ex.gif";
+                M4p.width = 200;
+                M4p.height = 200;
+                confirm("游戏结束，M4的塌缩液喷雾被引爆了\n你一共阻挡了" + counter + "只机械狗");
+                location.replace("resource\\Ex.html");
+            };
+            if (
+                (d4t + 60 >= M4t && d4t <= M4t + 100) &&
+                (d4l + 60 >= M4l && d4l <= M4l + 100)
+            ) {
+                M4p.src = "resource\\Ex.gif";
+                M4p.width = 200;
+                M4p.height = 200;
+                confirm("游戏结束，M4的塌缩液喷雾被引爆了\n你一共阻挡了" + counter + "只机械狗");
+                location.replace("resource\\Ex.html");
+            };
+            //20杀,坦克碾压
+            if (counter == 20) {
+                confirm("看在你坚持这个破游戏这么久的分上，我给你一个Happy Ending");
+                location.replace("resource\\SC.html");
+            };
+            //被封印的真结局
+            if (counter == 100) {
+                confirm("看在你坚持这个破游戏这么久的分上，我给你一个True Ending");
+                location.replace("resource\\SC？.html");
+            };
+            document.getElementById("countboard").innerHTML = "" + counter;
+        }
+        function DogM() {
+            d1t += 1.2;
+            d1l += 3;
+            D1.style.top = d1t;
+            D1.style.left = d1l;
+            d2t -= 1.2;
+            d2l += 3;
+            D2.style.top = d2t;
+            D2.style.left = d2l;
+            d3t += 1.2;
+            d3l -= 3;
+            D3.style.top = d3t;
+            D3.style.left = d3l;
+            d4t -= 1.2;
+            d4l -= 3;
+            D4.style.top = d4t;
+            D4.style.left = d4l;
+        }
+    </script>
+</head>
+<body onkeypress="ImageChange()" onkeydown="ImageChange()" onload="Initialize()">
+    <h3>
+        方向键移动M4<br />
+        用喷雾攻击机械狗<br />
+        保护RO<br />
+    </h3>
+    <div style="position:absolute;top:5%;left:40%"><font size="5">阻挡机械狗<div id="countboard" style="display:inline-block">0</div>只</font></div>
+    <div id="M4" style="position:absolute;top:300px;left:750px">
+        <img src="resource\\M4R.gif" width="100" height="100" name="M4p" /><br />
+        &nbsp;&nbsp <font size="4" color="black">M4</font>
+    </div>
+    <div id="Spit" style="position:absolute;top:325px;left:835px">
+        <img src="resource\\spitR.png" width="131" height="45" name="spitp" /><br />
+    </div>
+    <div id="RO" style="position:absolute;top:300px;left:650px">
+        <img src="resource\\RO.png" width="100" height="100" name="ROP"/><br />
+        &nbsp;&nbsp;&nbsp;
+        <font size="4" color="black">RO</font>
+    </div>
+    <div id="D1" style="position:absolute;top:80px;left:40px">
+        <img src="resource\\dr.png" width="60" height="60" /><br />
+    </div>
+    <div id="D2" style="position:absolute;top:600px;left:40px">
+        <img src="resource\\dr.png" width="60" height="60" /><br />
+    </div>
+    <div id="D3" style="position:absolute;top:80px;left:1300px">
+        <img src="resource\\dl.png" width="60" height="60" /><br />
+    </div>
+    <div id="D4" style="position:absolute;top:600px;left:1300px">
+        <img src="resource\\dl.png" width="60" height="60" /><br />
+    </div>
+</body>
+</html>

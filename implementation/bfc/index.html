@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>bfc test</title>
+</head>
+<body>
+  <!-- bfc : 即块级格式化上下文，指被隔离的容器内部的元素不会影响到外部的元素 -->
+  <!-- 利用bfc实现自适应两栏布局 -->
+  <div class="container">
+    <div id="left">left part</div>
+    <div id="right">right part</div>
+  </div>
+
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      overflow-y: scroll;  
+    }
+
+    #left {
+      min-width: 200px;
+      height: 100%;
+      float: left;
+      background-color: burlywood;
+      margin-right: 2em;
+    }
+
+    #right {
+      width: 100%;
+      height: 100%;
+      background-color: beige;
+    }
+
+
+  </style>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vue-component</title>
+  <script type='text/javascript' src="./vue.min.js"></script>
+</head>
+<body>
+  <div id='app1'>
+    <!-- 组件为可复用的vue实例，与new Vue接收相同的选项，如data、computed等 -->
+    <!-- data必须是一个函数，因此每个实例可以维护一份被返回对象的独立拷贝 -->
+    <!-- 分为全局注册与局部注册，此处为通过Vue.component()全局注册 -->
+    <button-counter></button-counter>
+  </div>
+  <hr>
+  <div id="app2">
+    <!-- 使用props向组件传递数据 -->
+    <!-- 可使用v-bind来动态传递props -->
+    <blog-post v-for='post in posts' :key='post.id' :post='post'></blog-post>
+  </div>
+
+  <hr>
+  <!-- 监听子组件事件 -->
+  <div id="app3">
+    <div name='one' :style='{ fontSize:postFontSize+"em"}'>
+      <blog-post-button-1
+        v-for='post in posts'
+        :key='post.id'
+        :post='post'
+      ></blog-post-button-1>
+    </div>
+    <hr>
+    <!-- 通过自定义事件，配合$emit可实现在父组件中监听子组件事件 -->
+    <!-- $emit可抛出事件，第一个参数为事件名； -->
+    <!-- $emit也可抛出树，第二个参数可用于抛出数据，此时在父组件中可通过$event访问到这个值。
+                          若，这个事件处理函数是一个方法，那么这个值将会作为第一个参数传入该方法 -->
+    <div name='two' :style='{ fontSize:postFontSize+"em"}'>
+      <blog-post-button-2
+        v-for="(post, index) in posts" 
+        :key="index"
+        :post='post'
+        v-on:enlarge-text='onEnlargeText'
+        @narrow-text='postFontSize-=$event'
+    ></blog-post-button-2>
+    </div>
+    <hr>
+    <div name="three">
+      <custom-input
+        v-model='searchText'
+      ></custom-input>
+      <p>text is {{searchText}}</p>
+    </div>
+  </div>
+
+  <hr>
+  <div id="app4">
+    <div name='one'>
+      <component-a></component-a>
+      <com-b v-model='bval'></com-b>
+      <component-c></component-c>
+    </div>
+    <div name='two'>
+      <com-d 
+        id=1008
+        name='kk'
+        age='22'
+       ></com-d>
+       <com-d v-bind='info'></com-d>
+    </div>
+  </div>
+  <script type="text/javascript" src="./index.js"></script>
+</body>
+</html>

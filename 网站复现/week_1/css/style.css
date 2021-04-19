@@ -1,0 +1,342 @@
+/**
+*top
+*/
+#container-top{
+    float:left;
+    height:600px;
+    width:1200px;
+    background-color: #4c5a65;
+}
+
+.con0{
+    border:0;
+    margin:0;
+}
+
+
+.btns{
+    border-style: none;
+    color:whitesmoke;
+    margin-right: 100px;
+    align-content: center;
+    text-align: center;
+    float:right;
+
+}
+
+.btns li{
+    float:left;
+    list-style: none;
+    margin:15px;
+}
+
+
+/**
+* text-top
+*/
+.con1{
+    position:relative;
+    width:1000px;
+    height:400px;
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+.phone-image{
+    float: left;
+    /*margin-left:100px;*/
+    margin-top: 25px;
+}
+
+.phone-image img{
+    margin-bottom: 0em;
+    padding-bottom: 0px;
+}
+
+.logo{
+    float:left;
+    width:500px;
+    margin:30px 100px;
+}
+
+.text-top{
+    position: relative;
+    float: right;
+    width:450px;
+    height:600px;
+    color:whitesmoke;
+    padding-top: 50px;;
+}
+
+.text-top #quote-btn{
+    position:relative;
+    top:100px;
+    float:left;
+}
+
+.text-top ul{
+    border-style: none;
+    color: whitesmoke;
+    position:relative;
+    top:97px;
+    padding-left: -30px;
+    float:right;
+}
+
+.text-top h1{
+    float:left;
+    font-size: xx-large;
+    margin-top: 30;
+}
+
+.text-top p{
+    float:left;
+    font-size: large;
+    word-wrap: break-word;
+}
+
+
+.text-top li{
+    float: left;
+    margin-right:20px;
+    list-style: none;
+}
+
+
+.text-top #or{
+    margin-right: 30px;
+    margin-left: -60px;
+}
+
+.text-top #recent-work{
+    list-style-image:url('../homepage/morecomputer.jpg');
+}
+
+.clearfix{
+    clear: both;
+}
+
+/**
+*middle
+*/
+.container-mid{
+    float: left;
+    position: relative;
+    width:1200px;
+    height:80px;
+}
+
+
+/**
+*bottom
+*/
+.container-bottom{
+    float: left;
+    width:1200px;
+    height:1500px;
+    background-color: #f5f5f5;
+    border:0;
+}
+
+
+/**
+* list-image
+*/
+.list-image{
+    width: 1000px;
+    height: 200px;
+    position: relative;
+    top:100px;
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+.list-image li{
+    float: left;
+    list-style-type: none;
+    list-style: none;
+    margin-left:88px;
+    margin-right: 88px;
+}
+
+.list-title{
+    width: 1000px;
+    height:250px;
+    position: relative;
+    top:50px;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 10;
+    color: dimgrey;
+    margin-left: 100px;
+}
+
+.list-title #title{
+    list-style-type: none;
+    list-style: none;
+    margin-right: 25px;
+    margin-left: 25px;
+    width:266px;
+    text-align: center;
+}
+
+.list-title li{
+    float:left;
+    list-style: none;
+    list-style-type: none;
+}
+
+
+
+/**
+* list-text
+*/
+.list-text{
+    position: relative;
+    top:10px;
+}
+
+
+/**
+* list-projects
+*/
+.list-projects{
+    width:1000px;
+    margin-top: 100px;
+    margin-left: 100px;
+    margin-right:100px;
+    position: relative;
+}
+
+.list-projects #title{
+    list-style-image: url('../homepage/leaderpicture.jpg');
+}
+
+.list-projects #pics{
+    list-style-type: none;
+    
+}
+
+.list-projects #pics #pic{
+    list-style: none;
+    width:23%;
+    float:left;
+    
+}
+
+.list-projects #pics img{
+    width:80%;
+}
+
+.list-projects #pics #seemore{
+    width:6%;
+    float:left;
+}
+
+
+/**
+* blog
+*/
+.blog{
+    position: relative;
+    top:100px;
+    width:450px;
+    height:400px;
+    float:left;
+    margin-left:100px;
+}
+
+.side-image{
+    float:left;
+}
+
+.side-image #title{
+    float:left;
+    list-style-image: url('../homepage/fromblog.jpg');
+}
+
+.side-image #pic{
+    list-style: none;
+    list-style-type: none;
+    margin-right:20px;
+    margin-bottom: 50px;
+    margin-top: 20px;
+}
+
+.intro{
+    float:left;
+    width:250px;
+    margin-top: 30px;
+}
+
+.intro p{
+    font-size: small;
+    color:gray;
+}
+
+.intro a{
+    text-decoration: none;
+    color:cornflowerblue;
+}
+
+.intro a:hover{
+    color:orange;
+}
+.intro a:visited{
+    color:rosybrown;
+}
+
+
+/**
+* twitter
+*/
+.twitter{
+    float:right;
+    position:relative;
+    top:100px;
+    width: 450px;
+    height:400px;
+    margin-right: 100px;
+}
+
+.twitter #title{
+    list-style-image: url('../homepage/twitter1.jpg');
+    color: black;
+}
+
+.twitter #content{
+    list-style-type: none;
+}
+
+
+.hr{
+    width:1200px;
+    float:left;
+    margin-top: 100px;
+}
+
+#line{
+    float: left;
+    color:gray;
+    filter: alpha(100,0,3);
+    width:80%;
+    margin-left: 100px;
+}
+
+.share{
+    position: relative;
+    float:right;
+    width:300px;
+}
+
+
+.share li{
+    list-style-type:none;
+    float: left;
+}
+
+.hr p{
+    float:left;
+    position: relative;
+    color:gray;
+    margin-left:100px ;
+}

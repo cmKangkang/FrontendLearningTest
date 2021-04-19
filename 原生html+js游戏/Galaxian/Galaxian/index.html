@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>FC 小蜜蜂</title>
+		<style>
+            button {
+                top: 480px;
+                left: 340px;
+                position: absolute;
+            }
+            div {
+                width: 600px;
+                height: 360px;
+                margin: auto;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+			canvas {
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				background: transparent;
+			}
+			#background {
+				z-index: -2;
+			}
+			#main {
+				z-index: -1;
+			}
+			#ship {
+				z-index: 0;
+			}
+			.score {
+				position: absolute;
+				top: 5px;
+				left: 520px;
+				color: #f84920;
+				font-family: Helvetica, sans-serif;
+				cursor: default;
+			}
+			.game-over {
+				position: absolute;
+                margin: auto;
+				top: 200px;
+				left: 220px;
+				color: #FF7F00;
+				font-family: Helvetica, sans-serif;
+				font-size: 30px;
+				cursor: default;
+				display: none;
+			}
+			.game-over span {
+				font-size: 30px;
+				cursor: pointer;
+				position: relative;
+				left: 0 px;
+			}
+			.game-over span:hover {
+				color: #FFD700;
+			}
+			.loading {
+				position: absolute;
+				top: 200px;
+				left: 220px;
+				color: #FF7F00;
+				font-family: Helvetica, sans-serif;
+				font-size: 30px;
+				cursor: default;
+			}
+		</style>
+	</head>
+	<body>
+        <button onclick="game.muteAll()" type="button">关闭/打开声音</button>
+        <div>
+            <!-- The canvas for the panning background -->
+            <canvas id="background" width="600" height="360">
+                你的浏览器不支持 canvas. 请换一个浏览器再试.
+            </canvas>
+            <!-- The canvas for all enemy ships and bullets -->
+            <canvas id="main" width="600" height="360">
+            </canvas>
+            <!-- The canvas the ship uses (can only move up
+            one forth the screen. -->
+            <canvas id="ship" width="600" height="360">
+            </canvas>
+            <div class="score">分数: <span id="score"></span></div>
+            <div class="game-over" id="game-over">游戏结束<p><span onclick="game.restart()">重新开始</span></p></div>
+            <div class="loading" id="loading">加载中...<p>请稍等</p></div>
+        </div>
+        
+		<script src="galaxian.js"></script>
+	</body>
+</html>

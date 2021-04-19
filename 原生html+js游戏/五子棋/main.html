@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>五子棋</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
+	
+	<script>
+		window.onload=function(){
+			var grid;
+			var chessArr = [];
+			var timer = 0;
+			var lineNum = parseInt(gridNum.innerHTML);
+			var box = document.getElementById('chessboard');
+			var chessBox = box.getElementsByTagName('div');
+			var submitBtn = document.getElementById('submitBtn');
+			var withdrawBtn = document.getElementById('withdraw');
+			var lastChess=[];
+			var lastSite=[];
+			var aiPlayer = new AiChesser();
+			var modelSelect = document.getElementsByName('model');
+			withdrawBtn.onclick = ()=>{
+				if(lastChess.length==0){
+					alert('无子可退');
+				}else{
+					for(var i=0;i<lastChess.length;i++){
+						lastChess[i].parentNode.removeChild(lastChess[i]);
+						chessArr[lastSite[i]]=0;
+						timer--;
+					}
+					lastChess.length=0;
+					lastSite.length=0;
+				}
+			}
+
+			subBtn.onclick = function(){
+				if ( lineNum > 13 ) {
+					lineNum--;
+				}
+				gridNum.innerHTML = lineNum;
+			}
+			addBtn.onclick = function(){
+				if ( lineNum < 19 ) {
+					lineNum++;
+				}
+				gridNum.innerHTML = lineNum;
+			}
+
+			//棋盘初始化
+			submitBtn.onclick = function(){
+				var chessMaxNum = lineNum * lineNum;
+				var chessWH = 90/(lineNum);
+				for (var i = 0; i < chessMaxNum; i++) {
+					grid = document.createElement('div');
+					grid.style.width = 'calc(' + chessWH + 'vmin - 2px)';
+					grid.style.height = 'calc(' + chessWH + 'vmin - 2px)';
+					grid.id=i;
+					box.appendChild(grid);
+					chessArr[i] = 0;
+
+					grid.onclick = function(x){
+						var index = x.target.id||x.target.parentNode.id;
+						if(modelSelect[2].checked){
+							playChess(index);
+						}else{
+							if(!playChess(index)) {
+								playChessByAi();
+							}
+						}
+					};
+					
+				};
+				mask.style.display = 'none';
+				if(modelSelect[1].checked){
+					playChessByAi();
+					lastChess.length=0;
+					lastSite.length=0;
+				}
+			}
+
+		
+
+			//棋子对象
+			function Chess(){
+				this.color = 'white';
+				this.site = 0;
+				this.chessDom = function(){
+					var dom = document.createElement('p');
+					dom.setAttribute('class',this.color);
+					return dom;
+				}
+				this.ligature = function(arr){
+					var whiteChess = arr.map(function(s){
+						return (s.color == 'white')?parseInt(s.site):-1;
+					});
+					var blackChess = arr.map(function(s){
+						return (s.color == 'black')?parseInt(s.site):-1;
+					});
+
+					var win= judge(whiteChess,'白子')||judge(blackChess,'黑子');
+
+					function judge(che,color){
+						for (var i = 0;i < che.length;i++) {
+							var x = che[i]%lineNum;
+							var y = parseInt(che[i]/lineNum);
+							if ( x <= lineNum - 5 && y <= lineNum - 5 && che[i] != -1 ) {
+								if( che[i+1*lineNum+1] != -1 && che[i+2*lineNum+2] != -1 && che[i+3*lineNum+3] != -1 && che[i+4*lineNum+4] != -1 ){
+									winColor=color;
+									setTimeout(alertWiner,0);
+									return true;
+								}
+							};
+							if ( y <= lineNum - 5 && che[i] != -1 ) {
+								if( che[i+1*lineNum] != -1 && che[i+2*lineNum] != -1 && che[i+3*lineNum] != -1 && che[i+4*lineNum] != -1 ){
+									winColor=color;
+									setTimeout(alertWiner,0);
+									return true;
+								}
+							};
+							if ( x >= 4 && y <= lineNum - 5 && che[i] != -1 ) {
+								if( che[i+1*lineNum-1] != -1 && che[i+2*lineNum-2] != -1 && che[i+3*lineNum-3] != -1 && che[i+4*lineNum-4] != -1 ){
+									winColor=color;
+									setTimeout(alertWiner,0);
+									return true;
+								}
+							};
+							if ( x <= lineNum - 5 && che[i] != -1 ) {
+								if( che[i+1] != -1 && che[i+2] != -1 && che[i+3] != -1 && che[i+4] != -1 ){
+									winColor=color;
+									setTimeout(alertWiner,0);
+									return true;
+								}
+							};
+						};
+					
+					}
+					return win;
+				}
+			} 
+			function alertWiner(){
+						alert(winColor+'获胜!');
+						location.replace(location);
+					}
+			var winColor='black';
+
+
+			function playChess(i){
+				console.log(chessArr[i]);
+				if(chessArr[i] == 0){
+
+					if(modelSelect[2].checked){
+						lastChess.length=0;
+						lastSite.length=0;
+					}
+					timer++;
+				    chessArr[i] = new Chess();
+				    chessArr[i].color = timer%2==0?'white':'black';
+					chessArr[i].site = i;
+					var dom =chessArr[i].chessDom();
+					lastChess.push(dom);
+					lastSite.push(i);
+
+					chessBox[i].appendChild(dom);
+					
+					return chessArr[i].ligature(chessArr);
+					
+					
+				}else{
+					alert('此处有子!');
+					return true;
+				}
+			}
+
+			function playChessByAi(){
+				timer++;
+
+				if(lastChess.length>=2){
+					lastChess.splice(0,2);
+					lastSite.splice(0,2);
+				}
+				var chess = new Chess();
+				chess.color = timer%2==0?'white':'black';
+				aiPlayer.color = timer%2==0?'white':'black';
+
+				
+				var point=aiPlayer.next();
+				var i = point[0]+point[1]*lineNum;
+				chessArr[i] = chess
+				chessArr[i].site = i;
+
+				var dom =chess.chessDom();
+				lastChess.push( dom);
+				lastSite.push(i);
+
+				chessBox[i].appendChild(dom);
+				chessArr[i].ligature(chessArr);
+				
+			}
+			
+			var scoreTable=
+			[[0,20,100,500,2500,10000],		
+			[0,0,20,100,500,10000],			
+			[0,0,0,0,0,10000]];				
+			function AiChesser(){
+				this.color='';
+				this.next = function (color=this.color){
+					return nextChess(color);
+				}
+				function getChessArr(chessColor){
+					return chessArr.map(function(s){
+						var tag=0;
+						if(s!=0){
+							if(s.color==chessColor){
+								tag=1;
+							}else{
+								tag=-1;
+							}
+						}
+						return tag;
+					});
+				}
+				function getScore(x,y,color){
+					var vecX=[1,0,1,1];
+					var vecY=[0,1,1,-1];
+					var allChess = getChessArr(color);
+
+					var score = 0;
+					
+					for(var i=0;i<4;i++){
+						var k =0;
+						var count=1;
+						for(var j=-1;j<2;j+=2){
+							var dx=x+j*vecX[i];
+							var dy=y+j*vecY[i];
+
+							while(dx>=0&&dx<lineNum-1&&
+								  dy>=0&&dy<lineNum-1){
+									  if(allChess[dx+dy*lineNum]>0){
+										  count++;
+									  }else if(allChess[dx+dy*lineNum]<0){
+										  k++;
+										  break;
+									  }else{
+										  break;
+									  }
+									  dx=dx+j*vecX[i];
+									  dy=dy+j*vecY[i];
+								  }
+						}
+						if(count>5) count=5;
+						score=score+scoreTable[k][count];
+					}
+					return score;
+
+				}
+				function nextChess(color){
+					var chessMap = getChessArr(color);
+					var maxScore=-1;
+					var nextPoints =[];
+					for(var i =0;i<chessMap.length;i++){
+						if(chessMap[i]==0){
+							var x = i%lineNum;
+							var y = parseInt(i/lineNum);
+							var score = Math.max(  getScore( x,y,'white'),getScore(x,y,'black'));
+							if(score>maxScore){
+								maxScore=score;
+								nextPoints.length=0;
+								nextPoints.push([x,y]);
+							}else if(score==maxScore){
+								nextPoints.push([x,y]);
+							}
+						}
+					}
+					
+					var index = Math.floor((Math.random()*nextPoints.length));
+					return nextPoints[index];
+				}
+			}
+			
+		};
+	</script>
+</head>
+<link type="text/css" rel=stylesheet href="../../Desktop/五子棋/mystyle.css">
+<body>
+	<section id="conBox">
+		
+			<h1 align="center"><button id="withdraw" class="withdraw">撤回</button></h1>
+		
+	</section>
+	<section id="chessboard" class="clear">
+	</section>
+	<section id="mask">
+		<aside class="conBox">
+			<h1 class="borderBot">请选择棋盘规格和模式！</h1>
+			<p id="subBtn" class="border">-</p>
+			<p id="gridNum" value="15" class="borderTop">15</p>
+			<p id="addBtn" class="border">+</p>
+			<label class="modelSelect"><input type="radio"s/ name ="model" value="first" checked>单人先手</label>
+			<label class="modelSelect"><input type="radio" name ="model" value="last" >单人后手</label>
+			<label class="modelSelect"><input type="radio" name ="model" value="twoplayer">双人</label>
+			<button id="submitBtn">确认</button>
+			
+		</aside>
+	</section>
+	<div style="text-align:center;">
+</div>
+</body>
+</html>

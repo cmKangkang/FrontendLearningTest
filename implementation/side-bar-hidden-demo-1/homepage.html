@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="./css/home-style.css"  type="text/css"></link>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <!-- <script src="./js/homepage.js"></script> -->
+</head>
+<body>
+    <!-- 顶部dock栏 点击头像出现侧边菜单-->
+    <div class="topdock">
+        <div class="appname">CoursePro</div>
+        <div class="userzone">
+                <span class="potrait"><a class="sidebarbtn"><img src="./source/default.png" alt="" width=30px height=30px></a></span>
+                <span class="nickname">cmkangkang</span>
+            </ul>
+        </div>
+    </div>
+
+<script type="text/javascript">
+        $('.sidebarbtn').on('click',function () {
+        $('.sidebar').toggleClass('side');
+    });
+</script>
+
+    <!-- 课堂显示区：课表等等 -->
+    <div class="mainzone">
+        <!--课程显示区，左下-->
+        <div class="coursezone">
+            
+            <button class="course" onclick="window.open('./videopage.html')">
+                <div class="course-info">
+                    <h2>Demo Course</h2>
+                    <h6>teacher: Somebody</h6>
+                    <h6>date:...</h6>
+                </div>
+            </button>
+
+            <!-- <script>
+                function goToDemo(){
+                    window.location.href='./videopage.html';
+                }
+            </script> -->
+        </div>
+
+        <!-- 侧边栏，在点击头像时显示 -->
+        <div class="sidebar">
+            <ul>
+                <li><a class="ion-gear-b" href="https://www.apple.com/cn/shop/buy-mac/macbook-pro/MV912CH/A#"></a></li>
+                <li><a class="ion-ios-game-controller-b" href="http://www.4399.com/"></a></li>
+                <li><a class="ion-social-twitter" href="https://weibo.com/cctvxinwen?topnav=1&wvr=6&topsug=1"></a></li>
+                <li><a class="ion-social-youtube" href="https://www.bilibili.com"></a></li>
+                <li><a class="ion-ios-basketball" href="https://sports.qq.com/nba/"></a></li>
+            </ul>
+    </div>
+  
+</body>
+</html>

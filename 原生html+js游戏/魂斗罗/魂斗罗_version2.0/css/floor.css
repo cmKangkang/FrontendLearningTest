@@ -1,0 +1,294 @@
+.floor{
+	background-color: red;
+	z-index: 500;
+	width: 56px;
+	height: 96px;
+	position: fixed;
+	top:380px;
+	left: 160px;
+	opacity: 0;
+}
+#floors{
+	display: block;
+}
+
+#floor1{
+	background-color: blue;
+	width: 650px;
+	height: 10px;
+	position: fixed;
+	top:355px;
+	left: 52px;
+	
+}
+
+#floor2{
+	background-color: blue;
+	width: 1300px;
+	height: 10px;
+	position: fixed;
+	top:240px;
+	left: 560px;/* 560 */
+	
+}
+
+#floor3{
+	background-color: blue;
+	width: 225px;
+	height: 10px;
+	position: fixed;
+	top:675px;
+	left: 640px;/* 640 */
+}
+
+#floor4{
+	background-color: blue;
+	width: 150px;
+	height: 10px;
+	position: fixed;
+	top:510px;
+	left: 885px;/* 640 */
+}
+
+#floor5{
+	background-color: blue;
+	width: 560px;
+	height: 10px;
+	position: fixed;
+	top:455px;
+	left: 1140px;/* 1140 */
+}
+
+#floor6{
+	background-color: blue;
+	width: 475px;
+	height: 10px;
+	position: fixed;
+	top:675px;
+	left: 1470px;
+}
+
+/* #floor7{
+	background-color: blue;
+	width: 475px;
+	height: 10px;
+	position: fixed;
+	top:690px;
+	left: 1470px;
+} */
+
+#floor7{
+	background-color: blue;
+	width: 560px;
+	height: 10px;
+	position: fixed;
+	top:350px;
+	left: 1800px;/*1800*/
+}
+
+#floor8 {
+    background-color: blue;
+    width: 150px;
+    height: 10px;
+    position: fixed;
+    top: 565px;
+    left: 1955px;/*1960*/
+}
+
+#floor9 {
+    background-color: blue;
+    width: 155px;
+    height: 10px;
+    position: fixed;
+    top: 565px;
+    left: 2210px;/*2210*/
+}
+
+#floor10 {
+    background-color: blue;
+    width: 395px;
+    height: 10px;
+    position: fixed;
+    top: 245px;
+    left: 2300px;/*2300*/
+}
+
+#floor11 {
+    background-color: blue;
+    width: 65px;
+    height: 10px;
+    position: fixed;
+    top: 510px;
+    left: 2455px;/*2460*/
+}
+
+#floor12 {
+    background-color: blue;
+    width: 225px;
+    height: 10px;
+    position: fixed;
+    top: 460px;
+    left: 2630px;/*2630*/
+}
+
+#floor13 {
+    background-color: blue;
+    width: 140px;
+    height: 10px;
+    position: fixed;
+    top: 350px;
+    left: 2800px;/*2790*/
+}
+
+#floor14 {
+    background-color: blue;
+    width: 140px;
+    height: 10px;
+    position: fixed;
+    top: 455px;
+    left: 3035px;/*3035*/
+}
+
+#floor15 {
+    background-color: blue;
+    width: 70px;
+    height: 10px;
+    position: fixed;
+    top: 670px;
+    left: 3120px;/*3120*/
+}
+
+#floor16 {
+    background-color: blue;
+    width: 230px;
+    height: 10px;
+    position: fixed;
+    top: 565px;
+    left: 3370px;/*3370*/
+}
+
+#floor17 {
+    background-color: blue;
+    width: 150px;
+    height: 10px;
+    position: fixed;
+    top: 350px;
+    left: 3450px;/*3450*/
+}
+
+#floor18 {
+    background-color: blue;
+    width: 150px;
+    height: 10px;
+    position: fixed;
+    top: 240px;
+    left: 3450px;/*3450*/
+}
+
+#floor19 {
+    background-color: blue;
+    width: 70px;
+    height: 10px;
+    position: fixed;
+    top: 670px;
+    left: 3535px;/*3535*/
+}
+
+#floor20 {
+    background-color: blue;
+    width: 70px;
+    height: 10px;
+    position: fixed;
+    top: 510px;
+    left: 3700px;/*3700*/
+}
+
+#floor21 {
+    background-color: blue;
+    width: 150px;
+    height: 10px;
+    position: fixed;
+    top: 345px;
+    left: 3785px;/*3785*/
+}
+
+#floor22 {
+    background-color: blue;
+    width: 390px;
+    height: 10px;
+    position: fixed;
+    top: 455px;
+    left: 4035px;/*4035*/
+}
+
+#floor23 {
+    background-color: blue;
+    width: 230px;
+    height: 10px;
+    position: fixed;
+    top: 670px;
+    left: 4365px;/*4365*/
+}
+
+#floor24 {
+    background-color: blue;
+    width: 150px;
+    height: 10px;
+    position: fixed;
+    top: 560px;
+    left: 4615px;/*4615*/
+}
+
+#floor25 {
+    background-color: blue;
+    width: 150px;
+    height: 10px;
+    position: fixed;
+    top: 450px;
+    left: 4785px;/*4785*/
+}
+
+#floor26 {
+    background-color: blue;
+    width: 390px;
+    height: 10px;
+    position: fixed;
+    top: 350px;
+    left: 4785px;/*4785*/
+}
+
+#floor27 {
+    background-color: blue;
+    width: 985px;
+    height: 10px;
+    position: fixed;
+    top: 670px;
+    left: 4865px;/*4785*/
+}
+
+#floor28 {
+    background-color: blue;
+    width: 310px;
+    height: 10px;
+    position: fixed;
+    top: 510px;
+    left: 4865px;/*4865*/
+}
+
+#floor29 {
+    background-color: blue;
+    width: 70px;
+    height: 10px;
+    position: fixed;
+    top: 460px;
+    left: 5190px;/*5190*/
+}
+
+#floor30 {
+    background-color: blue;
+    width: 70px;
+    height: 10px;
+    position: fixed;
+    top: 565px;
+    left: 5275px;/*5275*/
+}

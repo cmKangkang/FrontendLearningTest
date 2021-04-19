@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app1">
+    <a :href="url" :title="url">点我</a>
+    <button :name="name" @click="handleClick">点我</button>
+    <p>属性1：{{attr1}}</p>
+    <p>属性1的反转，即属性2：{{attr2}}</p>
+    <p>直接使用方法求出attr2: {{getAttr2()}}</p>
+    <br/>
+
+    <input type="text" v-model='input1' placeholder="姓"/>
+    <input type="text" v-model='input2' placeholder="名"/>
+    <input type="text" v-model='fullname'/>
+  </div>
+
+  <!-- 对象语法 -->
+  <div id="app2">
+    <!-- 对象语法  类名取决于 isActive， -->
+    <div :class="{ active: isActive, norm: isNorm }"></div>
+    <!-- 数组语法  三元表达式 -->
+    <div :class="[isActive ? 'active':'nactive']"></div>
+    <button @click='handleClick'></button>
+    <br/>
+    <div :style="{ clolor: activeColor, fontSize: fontSize+'px'}">绑定内联样式1</div>
+    <div :style="styleObject">绑定内联样式2</div>
+    <!-- 绑定多个相同的样式，按最后一个样式生效 -->
+    <div :style="[styleObject,styleObj]">绑定内联样式3</div>
+  </div>
+
+  <div id="app3">
+    <h1 v-if='flag'>You can see the heading</h1>
+    <h1 v-else>Oh, no.</h1>
+  </div>
+
+  <div id="app4"></div>
+
+  <div id="app5">
+    <li v-for="(e,idx) in arr" :key='idx'>index:{{idx}}, element: {{e}}</li>
+  </div>
+
+  <div id="app6">
+    <table class="table">
+      <th>编号</th>
+      <th>名称</th>
+      <th>创建时间</th>
+      <th>操作</th>
+      <tr v-for="item in list">
+        <td>{{item.id}}</td>
+        <td>{{item.name}}</td>
+        <td>{{item.ctime}}</td>
+        <td><a href='#'>删除</a></td>
+      </tr>
+    </table>
+  </div>
+
+  <div id="app7">
+    <!-- v-for computed实现筛选 -->
+    <li v-for="(e, idx) in arrFilter" :key="idx">{{e.n}}</li>
+
+    <!-- v-for + v-if 实现筛选 -->
+    <li v-for="(e, index) in arr" :key="index" v-if='e.f'>{{e.n}}</li>
+    
+    <!-- v-for嵌套 -->
+    <ul v-for="set in sets">
+      <li v-for="n in even(set)">{{ n }}</li>
+    </ul>
+  </div>
+
+  <div id="app8">
+    <form v-on:submit.prevent="addNew">
+      <label for="new-todo">Add a todo</label>
+      <input
+        v-model="newTodoText"
+        id="new-todo"
+        placeholder="E.g. Feed the cat"
+      >
+      <button>Add</button>
+    </form>
+    <ul>
+      <li
+        is="todo-item"
+        v-for="(todo, index) in todos"
+        v-bind:key="todo.id"
+        v-bind:title="todo.title"
+        v-on:remove="todos.splice(index, 1)"
+      ></li>
+    </ul>
+  </div>
+<br>
+
+<h1>v-on</h1>
+  <div id="app9">
+    <button @click="counter+=1">add 1</button>
+    <p>the button has been clicked {{counter}} times.</p>
+    <button @click='say(msg)'>click to say hello</button>
+    <button @click='warn($event)'>see the clicked item</button>
+    <div @click='handleClick($event)'>
+      <ol>
+        <li v-for="(item, index) in arr" :key="index" @click='handleClick2'>{{item}} item</li>
+      </ol>
+    </div>
+    <br>
+    <!-- 修饰符还可串联 ：@click.prevent.self -->
+    <div @click='handleClick1()'>
+      <ol>
+        <li v-for="(item, index) in arr" :key="index" @click.stop='handleClick2()'>{{item}} item</li>
+      </ol>
+    </div>
+  </div>
+
+
+  <div id='app10'>
+    <input @keyup.enter='submit'>
+    <input @keyup='keyup($event)'/>
+  </div>
+
+
+  <h1>v-model</h1>
+  <!-- v-model 在内部为不同的输入元素使用不同的 property 并抛出不同的事件：
+
+text 和 textarea 元素使用 value property 和 input 事件；
+checkbox 和 radio 使用 checked property 和 change 事件；
+select 字段将 value 作为 prop 并将 change 作为事件。 -->
+
+  <div id="app11">
+    <input type="text" placeholder="edit" v-model='msg'>
+    <p>message is {{msg}}</p>
+    <hr/>
+    <span>Multiline message is:</span>
+    <p style="white-space: pre-line;">{{ mmsg }}</p>
+    <br>
+    <textarea v-model="mmsg" placeholder="add multiple lines"></textarea>
+    <hr>
+    <input type="checkbox" id="checkbox" v-model="checked">
+    <label for="checkbox">{{ checked }}</label>
+    <hr>
+    <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+    <label for="jack">Jack</label>
+    <input type="checkbox" id="john" value="John" v-model="checkedNames">
+    <label for="john">John</label>
+    <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+    <label for="mike">Mike</label>
+    <!-- 选中之后将 value值传入 -->
+    <input type='checkbox' id='lily' value='kk' v-model='checkedNames'>
+    <label for="lily">Lily</label>
+    <br>
+    <span>Checked names: {{ checkedNames }}</span>
+    <hr/>
+
+    <input type="radio" id='one' value='one' v-model="picked">
+    <label for="one">one</label>
+    <br>
+    <input type="radio" id='two' value="two" v-model="picked">
+    <label for="two">two</label>
+    <p>the chosen object is: {{picked}}</p>
+
+    <hr/>
+    <select v-model="selected">
+      <option value="" disabled>选择</option>
+      <option value="AA">A</option>
+      <option value="">B</option>
+      <option value="C">C</option>
+    </select>
+    <span>Selected: {{selected}}</span>
+    <br>
+    <select v-model="mselected" multiple>
+      <option disabled value="">请选择</option>
+      <option value="a">A</option>
+      <option value="b">B</option>
+      <option value="c">C</option>
+    </select>
+    <span>Selected: {{ mselected }}</span>
+    <hr>
+    <input
+      type="checkbox"
+      v-model="toggle"
+      true-value="yes"
+      false-value="no"
+    >
+    <p>{{toggle}}</p>
+    <hr>
+
+    <p>trim 与 lazy</p>
+    <input v-model.trim="msg">
+    <input type="text" v-model.lazy="msg">
+    <p>{{msg}}</p>
+  </div>
+  <style>
+    .active{
+      width:30px;
+      height:30px;
+      background-color: red;
+      
+    }
+    .nactive{
+      width:30px; 
+      height:30px;
+      background-color: black;
+    }
+    .norm{
+      width:30px;
+      height:30px;
+
+    }
+    
+  </style>
+  <script src="./index.js"></script>
+</body>
+</html>

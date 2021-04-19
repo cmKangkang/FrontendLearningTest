@@ -1,0 +1,56 @@
+.enemyA{
+	width: 56px;
+	height: 96px;
+	background:url(../img/enemy1_3.png) no-repeat;
+	/* background-color: fuchsia;	 */
+	position: fixed;
+	z-index: 50;
+	top:370px;
+	left:60px;
+	display: block;
+	/* background-position: center; */
+	animation: enemyARun .7s steps(1,start) infinite;
+}
+
+@keyframes enemyARun{
+	0%{
+		background-image: url(../img/enemy1_3.png);
+	}
+	33.3%{
+		background-image: url(../img/enemy1_2.png);
+	}
+	66.7%{
+		background-image: url(../img/enemy1_1.png);
+	}
+	100%{
+		background-image: url(../img/enemy1_3.png);
+	}
+}
+
+#enemyA1{
+	background:url(../img/enemy1_3.png) no-repeat;
+	top:260px;
+	left:600px;
+	display: block;
+}
+
+#enemyA2{
+	background:url(../img/enemy1_3.png) no-repeat;
+	top:110px;
+	left:1900px;
+	display: block;
+}
+
+#enemyA3{
+	background:url(../img/enemy1_3.png) no-repeat;
+	top:110px;
+	left:2000px;
+	display: block;
+}
+
+#enemyA4{
+	background:url(../img/enemy1_3.png) no-repeat;
+	top:110px;
+	left:1800px;
+	display: block;
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>魂斗罗</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<link rel="stylesheet" href="css/bg.css" style="text/css" />
+		<link rel="stylesheet" href="css/Player.css" style="text/css" />
+		<link rel="stylesheet" href="css/bullet.css" style="text/css"/>
+		<link rel="stylesheet" href="css/enemy.css" style="text/css"/>
+		<link rel="stylesheet" href="css/scores.css" style="text/css"/>
+		<link rel="stylesheet" href="css/story.css" style="text/css"/>
+		<link rel="stylesheet" href="css/floor.css" style="text/css"/>
+		
+		<script src="js/PlayerController.js"></script>
+		<script src="js/BgController.js"></script>
+		<script src="js/GameController.js"></script>
+		<script src="js/EnemyClass.js"></script>
+		<script src="js/BulletClass.js"></script>
+		<script src="js/PlayerClass.js"></script>
+		<script src="js/Floors.js"></script>
+		
+		
+	
+	</head>
+	
+	<body>
+		<div id="bg"></div>
+		
+		
+		<!-- 音乐 -->
+		<audio id="bgMusic" src="music/BgMusic.mp3"   loop="loop"></audio><!-- controls="controls" -->
+		<audio id="shootMusic" src="music/shoot.mp3"  ></audio><!-- controls="controls" -->
+		
+		<div id="PlayerThings">
+			<div id="Player"></div>
+			<div class="myBullet"></div>
+		</div>
+		
+		<div id="enemyThings">
+			<div class="enemyBullet"></div>
+			
+			<div class="enemyA" id="enemyA1"> </div>
+			<div class="enemyA" id="enemyA2"> </div>
+			<div class="enemyA" id="enemyA3"> </div>
+			<div class="enemyA" id="enemyA4"> </div>
+			<div class="enemyA" id="enemyA5"> </div>
+			
+			<div class="enemyA" id="enemyA6"> </div>
+			<div class="enemyA" id="enemyA7"> </div>
+			<div class="enemyA" id="enemyA8"> </div>
+			<div class="enemyA" id="enemyA9"> </div>
+			<div class="enemyA" id="enemyA10"> </div>
+			
+			<div class="enemyA" id="enemyA11"> </div>
+			<div class="enemyA" id="enemyA12"> </div>
+			<div class="enemyA" id="enemyA13"> </div>
+			<div class="enemyA" id="enemyA14"> </div>
+			<div class="enemyA" id="enemyA15"> </div>
+			
+			<div class="enemyA" id="enemyA16"> </div>
+			<div class="enemyA" id="enemyA17"> </div>
+			<div class="enemyA" id="enemyA18"> </div>
+			<div class="enemyA" id="enemyA19"> </div>
+			<div class="enemyA" id="enemyA20"> </div>
+			
+			<div class="enemyB" id="enemyB1"> </div>
+		</div>
+		
+		<div id="floors">
+			<div class="floor" id="floor1"> 1</div>
+			<div class="floor" id="floor2"> 2</div>
+			<div class="floor" id="floor3"> 3</div>
+			<div class="floor" id="floor4">4 </div>
+			<div class="floor" id="floor5"> 5</div>
+			
+			<div class="floor" id="floor6"> 6</div>
+			<div class="floor" id="floor7">7 </div>
+			<div class="floor" id="floor8"> 8</div>
+			<div class="floor" id="floor9"> 9</div>
+			<div class="floor" id="floor10"> 10</div>
+
+			<div class="floor" id="floor11"> 11</div>
+			<div class="floor" id="floor12"> 12</div>
+			<div class="floor" id="floor13"> 13</div>
+			<div class="floor" id="floor14"> 14</div>
+			<div class="floor" id="floor15"> 15</div>
+			
+			<div class="floor" id="floor16"> 16</div>
+			<div class="floor" id="floor17"> 17</div>
+			<div class="floor" id="floor18"> 18</div>
+			<div class="floor" id="floor19"> 19</div>
+			<div class="floor" id="floor20"> 20</div>
+			
+			<div class="floor" id="floor21"> 21</div>
+			<div class="floor" id="floor22"> 22</div>
+			<div class="floor" id="floor23"> 23</div>
+			<div class="floor" id="floor24"> 24</div>
+			<div class="floor" id="floor25">25 </div>
+			
+			<div class="floor" id="floor26"> 26</div>
+			<div class="floor" id="floor27"> 27</div>
+			<div class="floor" id="floor28"> 28</div>
+			<div class="floor" id="floor29"> 29</div>
+			<div class="floor" id="floor30"> 30</div>
+		</div>
+
+		<div id="scores">
+			<p>SCORES:</p>
+			<h2>0</h2>
+		</div>
+		
+		<div id="story">
+<!-- 		操作说明：<br/> -->
+		通用:A/D左右移动；K跳跃；U切换游戏模式<br/>
+		射击模式J攻击；跑酷模式L闪现300px 冷却2s<br/>
+		感觉不过瘾？试试跑酷模式！(按U或点击下方按钮)<br/>
+		<button onclick=RunRunRun()>跑酷模式</button>
+		<button onclick=ShootShootShoot()>射击模式</button>
+		</div>
+		
+		
+	</body>
+</html>

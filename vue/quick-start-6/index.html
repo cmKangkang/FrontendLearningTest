@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>template</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app1"></div>
+  <!-- 此处的template不会再HTML页面中显示，但会保留在dom节点中 -->
+  <!-- 在do中可通过querySlector(all)()选择template，其content为一个名叫 #document-fragment 的节点 -->
+  <template id="tfa1">
+    <div>
+      {{msg}}
+      <br>
+      <span>{{des}}</span>
+    </div>
+  </template>
+
+  <div id="app2">我是app2</div>
+  <template id="tfa2">
+    <div>
+      这是一个template
+    </div>
+  </template>
+
+  <div id="app3">
+    <template v-if='flag'>
+      <div>
+        app3, template
+      </div>
+    </template>
+    <template v-else>
+      <div>
+        app3, else template
+      </div>
+    </template>
+  </div>
+
+  <div id="app4">
+    <template v-for="(el, idx) in list" @key="idx">
+      <li>{{el}}</li>
+    </template>
+    <hr>
+    <template>
+      <template>
+        temp1
+      </template>
+      <template>
+        temp2
+      </template>
+    </template>
+    <hr>
+    <template>
+      <div>
+        temp3
+      </div>
+      <div>temp4</div>
+    </template>
+  </div>
+
+  <script>
+    let vm1 = new Vue({
+      el: '#app1',
+      /** 
+       * 1. 如果vue实例中有template属性，会将该属性值进行编译，将编译后的虚拟dom直接替换掉vue实例绑定的元素（即el绑定的那个元素）；
+         2. template属性中的dom结构只能有一个根元素，如果有多个根元素需要使用v-if、v-else、v-else-if设置成只显示其中一个根元素；
+         3. 在该属性对应的属性值中可以使用vue实例data、methods中定义的数据。
+       * 
+      */
+      template:'#tfa1',
+      data: {
+        msg: 'rkk',
+        des: 'age: 21',
+      }
+    });
+
+    let vm2 = new Vue({
+      el: '#app2',
+      template: '#tfa2',
+
+    });
+
+    let vm3 = new Vue({
+      el: '#app3',
+      data: {
+        flag: true,
+      },
+    })
+
+    let vm4 = new Vue({
+      el: "#app4",
+      data: {
+        list: ['123', '234', '345', '456'],
+      }
+    })
+
+    setTimeout(() => {
+      vm3.$data.flag = false;
+    }, 2000);
+  </script>
+</body>
+</html>

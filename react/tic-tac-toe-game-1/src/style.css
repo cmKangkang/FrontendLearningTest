@@ -1,0 +1,39 @@
+
+.btn {
+    width: 100px;
+    height: 100px;
+    border: 1px solid;
+    vertical-align: middle;
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  .board {
+    display:flex;
+    width:100%;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .game{
+    width:300px;
+    position:relative;
+    float:left;
+  }
+
+  h1{
+      text-align: center;
+  }
+
+.back_step{
+  width:300px;
+  position:relative;
+  float:left;
+}
+
+.back_step{
+  margin-top: 80px;
+  width:160px;
+  position: relative;
+  float:left;
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>vue-router</title>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h1>Hello App!</h1>
+    <p>
+      <!-- 1. router-link组件用于导航 -->
+      <!-- 2. to 属性指定链接 -->
+      <!-- 3. router-link默认会被渲染为a标签 -->
+      <router-link to='/foo'>go to foo</router-link>
+      <router-link to='/bar'>go to bar</router-link>
+    </p>
+
+    <!-- 路由配置到的组件将会渲染再router-view中 -->
+    <router-view></router-view>
+  </div>
+
+  <script>
+    // 定义组件，可外部引入
+    const Foo={template:'<div>foo</div>'};
+    const Bar={template:'<div>bar</div>'};
+
+    // 定义路由。
+    // 每个路由映射一个组件。其中component为组件
+    // 路由嵌套现在暂不讨论
+    const myroutes=[
+      {path:'/foo',component:Foo},
+      {path:'/bar',component:Bar}
+    ];
+
+    // 创建router实例，通过router传递配置
+    const myrouter=new VueRouter({
+      routes:myroutes,
+    })
+
+    // 创建与挂载根实例
+    // 通过router配置参数注入路由
+    const app=new Vue({
+      router:myrouter,
+    }).$mount('#app')
+  </script>
+</body>
+</html>

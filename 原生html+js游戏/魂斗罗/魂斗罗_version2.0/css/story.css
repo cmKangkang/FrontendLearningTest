@@ -1,0 +1,10 @@
+#story{
+	width: 25vw;
+	height: 20vh;
+	background-color:rgba(255, 240, 153, 0.9);	
+	position: fixed;
+	z-index: 996;
+	top:85vh;
+	text-align: center;
+	display: block;
+}

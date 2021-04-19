@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>alive-component</title>
+  <script src="./vue.min.js"></script>
+</head>
+<body>
+  <div id="app1">
+    <button v-for='(tab, idx) in tabs' :key='idx' @click='handleClick(tab)'>{{tab}}</button>
+    <!-- component 可显示is=后指定的组件，如此时currentTab为com1组件，则显示com1组件 -->
+    <!-- keeep-alive 可保持状态 -->
+    <keep-alive>
+      <component :is="currentTab"></component>
+    </keep-alive>
+  </div>
+
+  <div id="app2">
+    <parent>
+      <!-- <child></child> -->
+    </parent>
+  </div>
+
+  <hr>
+  <h1>过度</h1>
+  <div id="app3">
+    <button @click='tshow=!tshow'>Toggle</button>
+    <!-- transition 封装组件， 可给元素和组件添加进入、离开时的过渡 -->
+    <transition name='fade'>
+      <!--  .v-enter          定义过渡开始状态。在元素被插入前生效
+            .v-enter-active   进入过度生效时状态
+            .v-enter-to       进入过度结束的状态 -->
+      <!--  .v-leave          定义离开的过渡状态。
+            .v-leave-active   退出过度生效的状态
+            .v-leave-to       退出过度的结束时的状态 -->
+      <p v-if='tshow'>hello</p>
+    </transition>
+    here
+    <hr>
+    <button @click='sshow=!sshow'>Slide</button>
+    <transition name='slide'>
+      <p v-if='sshow'>slide</p>
+    </transition>
+  </div>
+
+  <style>
+    .fade-enter-active, .fade-leave-active {
+      transition: opacity .5s;
+    }
+    .fade-enter, .fade-leave-to{
+      opacity:0;
+    }
+
+    .slide-enter-active{
+      transition:all .5s ease;
+    }
+    .slide-leave-active{
+      transition:all .8s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+    .slide-enter, .slide-leave-to{
+      transform:translateX(10px);
+      opacity: 0;
+    }
+  </style>
+
+  <script src="./index.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyVue</title>
+</head>
+<body>
+  <div id="app">{{name}}</div>
+  <script type="module">
+    import MyVue from './3.js';
+    const vm = new MyVue({
+        el: "#app",
+        data: {
+            name: "完全没问题，看起来是不是很酷！"
+        }
+    });
+  </script>
+</body>
+</html>
